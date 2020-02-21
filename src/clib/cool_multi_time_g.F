@@ -31,7 +31,7 @@
      &                metGridRank, metGridDim,
      &                metPar1, metPar2, metPar3, metPar4, metPar5,
      &                metDataSize, metCooling, metHeating, clnew,
-     &                iVheat, iMheat, Vheat, Mheat,
+     &                iVheat, iMheat, Vheat, Mheat, priForceMMW,
      &                iisrffield, isrf_habing)
 
 !  SOLVE RADIATIVE COOLING/HEATING EQUATIONS
@@ -69,7 +69,7 @@
 
       real*8  aye, temstart, temend,
      &        utem, uxyz, uaye, urho, utim,
-     &        gamma, fh, z_solar, fgr, clEleFra
+     &        gamma, fh, z_solar, fgr, clEleFra, priForceMMW
       R_PREC  d(in,jn,kn),   e(in,jn,kn),
      &        u(in,jn,kn),   v(in,jn,kn),    w(in,jn,kn),
      &        de(in,jn,kn),  HI(in,jn,kn),   HII(in,jn,kn),
@@ -286,7 +286,7 @@
      &                metGridRank, metGridDim,
      &                metPar1, metPar2, metPar3, metPar4, metPar5,
      &                metDataSize, metCooling, metHeating, clnew,
-     &                iVheat, iMheat, Vheat, Mheat,
+     &                iVheat, iMheat, Vheat, Mheat, priForceMMW,
      &                iisrffield, isrf_habing, itmask)
 
 !        Compute the cooling time on the slice

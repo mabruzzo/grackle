@@ -8,7 +8,7 @@
      &                gamma, utem, imetal,
      &                clGridRank, clGridDim,
      &                clPar1, clPar2, clPar3,
-     &                clDataSize, clMMW,
+     &                clDataSize, clMMW, clForceMMW,
      &                itmask)
 
 !
@@ -45,6 +45,7 @@
 !    clPar1, clPar2, clPar3 - arrays containing cloudy grid parameter values
 !    clDataSize - total size of flattened 1D cooling data array
 !    clMMW      - cloudy mmw data
+!    clForceMMW - user specified primordial mmw value (for 0 or less use clMMW)
 !
 !    itmask     - iteration mask
 !
@@ -63,7 +64,7 @@
       integer in, jn, kn, is, ie, j, k,
      &     imetal
 
-      real*8 dom, zr, gamma, temstart, temend, utem
+      real*8 dom, zr, gamma, temstart, temend, utem, clForceMMW
       R_PREC d(in,jn,kn), metal(in,jn,kn), e(in,jn,kn)
       real*8 rhoH(in), tgas(in),
      &       mmw(in), logtem(in)
@@ -101,6 +102,27 @@
 
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////
 !=======================================================================
+
+!     if clForceMMW is positive, use that for the MMW
+
+      if (clForceMMW .gt. 0) then
+         do i=is+1, ie+1
+            if ( itmask(i) ) then
+
+               munew = clForceMMW
+               if (imetal .eq. 1) then
+                     munew = d(i,j,k) / (d(i,j,k) / munew +
+     &                 metal(i,j,k) / mu_metal)
+               endif
+
+               tgas(i) = max((gamma - 1._DKIND) *
+     &              e(i,j,k) * munew * utem,
+     &              temstart)
+               mmw(i) = munew
+            endif
+         enddo
+         return
+      endif
 
       end_int = .false.
 

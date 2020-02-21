@@ -323,6 +323,12 @@ cdef class chemistry_data:
         def __set__(self, val):
             self.data.H2_self_shielding = val
 
+    property forced_primordial_mmw:
+        def __get__(self):
+            return self.data.forced_primordial_mmw
+        def __set__(self, val):
+            self.data.forced_primordial_mmw = val
+
     property k24:
         def __get__(self):
             return self.rates.k24

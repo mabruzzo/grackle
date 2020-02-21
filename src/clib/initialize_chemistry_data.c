@@ -138,6 +138,12 @@ int _initialize_chemistry_data(chemistry_data *my_chemistry,
     my_chemistry->HydrogenFractionByMass = 1. / (1. + 0.1 * 3.971);
   }
 
+  if (my_chemistry->forced_primordial_mmw > 0 &&
+      my_chemistry->primordial_chemistry != 0){
+    fprintf(stderr, "ERROR: forced_primordial_mmw>0 requires primordial_chemistry =0.\n");
+    return FAIL;
+  }
+
   /* Allocate CoolData space for rates. */
 
   if (my_chemistry->primordial_chemistry > 0) {
@@ -485,6 +491,10 @@ void show_parameters(FILE *fp, chemistry_data *my_chemistry)
           my_chemistry->self_shielding_method);
   fprintf(fp, "H2_self_shielding                 = %d\n",
           my_chemistry->H2_self_shielding);
+  fprintf(fp, "H2_self_shielding                 = %d\n",
+          my_chemistry->H2_self_shielding);
+  fprintf(fp, "forced_primordial_mmw             = %g\n",
+	  my_chemistry->forced_primordial_mmw);
 # ifdef _OPENMP
   fprintf(fp, "omp_nthreads                      = %d\n",
           my_chemistry->omp_nthreads);

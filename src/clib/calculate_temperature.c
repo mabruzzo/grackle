@@ -44,7 +44,7 @@ extern void FORTRAN_NAME(calc_temp_cloudy_g)(
 	double *gamma, double *fh,
         long long *priGridRank, long long *priGridDim,
         double *priPar1, double *priPar2, double *priPar3, 
- 	long long *priDataSize, double *priMMW);
+        long long *priDataSize, double *priMMW, double *priForceMMW);
 
 int local_calculate_pressure(chemistry_data *my_chemistry,
                              chemistry_data_storage *my_rates,
@@ -210,7 +210,8 @@ int local_calculate_temperature_table(chemistry_data *my_chemistry,
         my_rates->cloudy_primordial.grid_parameters[1],
         my_rates->cloudy_primordial.grid_parameters[2],
         &my_rates->cloudy_primordial.data_size,
-        my_rates->cloudy_primordial.mmw_data);
+        my_rates->cloudy_primordial.mmw_data,
+        &my_chemistry->forced_primordial_mmw);
 
   return SUCCESS;
 }

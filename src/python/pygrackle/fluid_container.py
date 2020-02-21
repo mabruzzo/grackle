@@ -118,6 +118,8 @@ class FluidContainer(dict):
         self["mu"] = np.ones(self["energy"].size)
 
         if self.chemistry_data.primordial_chemistry == 0:
+            if my_chemistry.forced_primordial_mmw > 0:
+                self['mu'][:] = my_chemistry.forced_primordial_mmw
             return # mu=1
         
         # Check that (chemistry) density fields have been set.

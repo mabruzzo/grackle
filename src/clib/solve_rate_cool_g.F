@@ -43,7 +43,7 @@
      &                metGridRank, metGridDim,
      &                metPar1, metPar2, metPar3, metPar4, metPar5,
      &                metDataSize, metCooling, metHeating, clnew,
-     &                iVheat, iMheat, Vheat, Mheat,
+     &                iVheat, iMheat, Vheat, Mheat, priForceMMW,
      &                iisrffield, isrf_habing)
 
 !
@@ -138,6 +138,7 @@
 !    iMheat      - flag for using specific heating rate
 !    Vheat       - array of volumetric heating rates
 !    Mheat       - array of specific heating rates
+!    priForceMMW - user specified primordial mmw value (for 0 or less use priMMW)
 !
 !  OUTPUTS:
 !    update chemical rate densities (HI, HII, etc)
@@ -166,7 +167,7 @@
 
       real*8  dx, dt, aye, temstart, temend, gamma,
      &        utim, uxyz, uaye, urho, utem, fh, dtoh, z_solar, 
-     &        fgr, dtemstart, dtemend, clEleFra
+     &        fgr, dtemstart, dtemend, clEleFra, priForceMMW
 
 !  Density, energy and velocity fields fields
 
@@ -489,7 +490,7 @@ c      chunit = (7.17775e-12_DKIND)/(2._DKIND*uvel*uvel*mh)   ! 4.5 eV per H2 fo
      &                metGridRank, metGridDim,
      &                metPar1, metPar2, metPar3, metPar4, metPar5,
      &                metDataSize, metCooling, metHeating, clnew,
-     &                iVheat, iMheat, Vheat, Mheat,
+     &                iVheat, iMheat, Vheat, Mheat, priForceMMW,
      &                iisrffield, isrf_habing, itmask)
 
             if (ispecies .gt. 0) then

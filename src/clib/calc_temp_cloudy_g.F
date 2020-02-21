@@ -11,7 +11,7 @@
      &                gamma, fh, 
      &                priGridRank, priGridDim,
      &                priPar1, priPar2, priPar3,
-     &                priDataSize, priMMW)
+     &                priDataSize, priMMW, priForceMMW)
 
 !
 !  CALCULATE TEMPERATURE USING MMW FROM CLOUDY TABLE
@@ -50,6 +50,7 @@
 !    priPar1, priPar2, priPar3 - arrays containing primordial grid parameter values
 !    priDataSize - total size of flattened 1D primordial cooling data array
 !    priMMW      - primordial mmw data
+!    priForceMMW - user specified primordial mmw value (for 0 or less use priMMW)
 !
 !  OUTPUTS:
 !    update temperature array
@@ -70,7 +71,7 @@
       integer in, jn, kn, is, js, ks, ie, je, ke, 
      &        iexpand, imetal
       real*8  aye, temstart, temend, gamma,
-     &        utim, uxyz, uaye, urho, utem, fh
+     &        utim, uxyz, uaye, urho, utem, fh, priForceMMW
 
 !  Density, energy and velocity fields fields
 
@@ -159,7 +160,7 @@
      &        gamma, utem, imetal,
      &        priGridRank, priGridDim,
      &        priPar1, priPar2, priPar3,
-     &        priDataSize, priMMW,
+     &        priDataSize, priMMW, priForceMMW,
      &        itmask)
 
 !     Copy slice values into field array

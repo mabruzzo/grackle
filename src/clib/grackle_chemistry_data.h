@@ -136,6 +136,10 @@ typedef struct
   /* flag for Wolcott-Green+ 2011 H2 self-shielding */
   int H2_self_shielding;
 
+  /* parameter to set the primordial mmw to arbitrary value.
+     When <= 0, the mmw will be computed from the table. */
+  double forced_primordial_mmw;
+
   /* number of OpenMP threads, if supported */
 # ifdef _OPENMP
   int omp_nthreads;

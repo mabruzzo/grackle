@@ -117,6 +117,8 @@ chemistry_data _set_default_chemistry_parameters(void)
   my_chemistry.self_shielding_method                  = 0;
   my_chemistry.H2_self_shielding                      = 0;
 
+  my_chemistry.forced_primordial_mmw                  = 0.;
+
 //number of OpenMP threads
 # ifdef _OPENMP
   my_chemistry.omp_nthreads = omp_get_max_threads(); // maximum allowed number

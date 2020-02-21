@@ -126,6 +126,7 @@ c     This is the fortran definition of grackle_chemistry_dadta
          INTEGER(C_INT) :: radiative_transfer_intermediate_step
          INTEGER(C_INT) :: radiative_transfer_hydrogen_only
          INTEGER(C_INT) :: self_shielding_method
+	 REAL(C_DOUBLE) :: forced_primordial_mmw
 cc       INTEGER(C_INT) :: omp_nthreads // not supported in fortran
       END TYPE
 
