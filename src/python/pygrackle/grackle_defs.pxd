@@ -65,6 +65,7 @@ cdef extern from "grackle_chemistry_data.h":
         double hi_avg_crs
         double hei_avg_crs
         double heii_avg_crs
+        double comp
 
 cdef extern from "grackle_types.h":
     ctypedef struct c_code_units "code_units":

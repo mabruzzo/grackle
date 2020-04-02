@@ -23,9 +23,11 @@ cdef class chemistry_data:
     cdef c_chemistry_data data
     cdef c_chemistry_data_storage rates
     cdef c_code_units units
+    cdef object data_file_path
 
     def __cinit__(self):
         self.data = _set_default_chemistry_parameters()
+        self.data_file_path = None
 
     def initialize(self):
         ret =  _initialize_chemistry_data(&self.data, &self.rates, &self.units)
@@ -71,11 +73,16 @@ cdef class chemistry_data:
 
     property grackle_data_file:
         def __get__(self):
-            return self.data.grackle_data_file
+            return self.data.grackle_data_file.decode('UTF-8', 'strict')
         def __set__(self, val):
-            if isinstance(val, str):
-                val = val.encode('utf-8')
-            self.data.grackle_data_file = val
+            # when cython coerces a bytearray to a char*, it simply uses a
+            # pointer to the first byte and the pointer is tied to the lifetime
+            # of the original bytearray. To prevent the pointer from becoming
+            # invalid store a copy of it as an attribute of this class
+            self.data_file_path = val
+            if isinstance(self.data_file_path, str):
+                self.data_file_path = self.data_file_path.encode('utf-8')
+            self.data.grackle_data_file = self.data_file_path
 
     property cmb_temperature_floor:
         def __get__(self):
@@ -376,6 +383,12 @@ cdef class chemistry_data:
              return self.rates.k31
         def __set__(self, val):
              self.rates.k31 = val
+
+    property comp:
+        def __get__(self):
+             return self.rates.comp
+        def __set__(self, val):
+             self.rates.comp = val
 
     property comoving_coordinates:
         def __get__(self):
