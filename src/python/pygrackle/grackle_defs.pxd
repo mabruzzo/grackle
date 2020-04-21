@@ -52,6 +52,7 @@ cdef extern from "grackle_chemistry_data.h":
         int self_shielding_method
         int H2_self_shielding
         double forced_primordial_mmw
+        int with_compton_cooling
 
     ctypedef struct c_chemistry_data_storage "chemistry_data_storage":
         double k24
@@ -65,7 +66,6 @@ cdef extern from "grackle_chemistry_data.h":
         double hi_avg_crs
         double hei_avg_crs
         double heii_avg_crs
-        double comp
 
 cdef extern from "grackle_types.h":
     ctypedef struct c_code_units "code_units":

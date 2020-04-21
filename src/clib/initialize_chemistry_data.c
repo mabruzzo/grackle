@@ -293,6 +293,10 @@ int _initialize_chemistry_data(chemistry_data *my_chemistry,
      my_rates->n_cr_n, my_rates->n_cr_d1, my_rates->n_cr_d2, 
      &ioutput);
 
+  if (my_chemistry->with_compton_cooling == 0){
+    my_rates->comp = 0.;
+  }
+
   /* Initialize Cloudy cooling. */
   my_rates->cloudy_data_new = 1;
   int read_data;

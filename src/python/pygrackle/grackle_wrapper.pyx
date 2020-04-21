@@ -336,6 +336,12 @@ cdef class chemistry_data:
         def __set__(self, val):
             self.data.forced_primordial_mmw = val
 
+    property with_compton_cooling:
+        def __get__(self):
+            return self.data.with_compton_cooling
+        def __set__(self, val):
+            self.data.with_compton_cooling = val
+
     property k24:
         def __get__(self):
             return self.rates.k24
@@ -383,12 +389,6 @@ cdef class chemistry_data:
              return self.rates.k31
         def __set__(self, val):
              self.rates.k31 = val
-
-    property comp:
-        def __get__(self):
-             return self.rates.comp
-        def __set__(self, val):
-             self.rates.comp = val
 
     property comoving_coordinates:
         def __get__(self):

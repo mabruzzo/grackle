@@ -140,6 +140,10 @@ typedef struct
      When <= 0, the mmw will be computed from the table. */
   double forced_primordial_mmw;
 
+  /* include compton cooling in chemistry solver
+     0) no, 1) yes */
+  int with_compton_cooling;
+
   /* number of OpenMP threads, if supported */
 # ifdef _OPENMP
   int omp_nthreads;
