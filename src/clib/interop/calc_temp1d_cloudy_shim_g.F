@@ -57,8 +57,11 @@
 !
 !-----------------------------------------------------------------------
 
+      USE ISO_C_BINDING
       implicit NONE
-#include "grackle_fortran_types.def"
+#include "../grackle_fortran_types.def"
+#define FORTRAN_INTERFACE
+#include "calc_temp1d_cloudy_g.h"
 
 !  General Arguments
 
