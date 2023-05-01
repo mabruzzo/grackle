@@ -339,6 +339,14 @@ int main(void){
       z_vals.push_back(0.13242);
       z_vals.push_back(0.5);
       z_vals.push_back(10);
+
+      DummyGrackleConfig conf(n_tab_dims,0.0);
+      double* clPar2 = conf.chem_rates.cloudy_primordial.grid_parameters[1];
+      long long* clGridDim = conf.chem_rates.cloudy_primordial.grid_dimension;
+      z_vals.push_back(clPar2[clGridDim[1]-3]);
+      z_vals.push_back(clPar2[clGridDim[1]-2]);
+      z_vals.push_back(clPar2[clGridDim[1]-1]);
+      z_vals.push_back(clPar2[clGridDim[1]-1] * 1.01);
     }
 
     for (const auto& z_val : z_vals) {
