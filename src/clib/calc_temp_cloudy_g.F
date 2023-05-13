@@ -62,8 +62,7 @@
       USE ISO_C_BINDING
       implicit NONE
 #include "grackle_fortran_types.def"
-#define FORTRAN_INTERFACE
-#include "interop/calc_temp1d_cloudy_g.h"
+#include "interop/interop_funcs.def"
 #ifdef _OPENMP
 #include "omp_lib.h"
 #endif

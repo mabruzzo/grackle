@@ -15,11 +15,9 @@
 #include <stdint.h> // int32_t
 #include <stdio.h>
 #include <math.h> // log, log10
-#include "grackle_macros.h"
-#include "grackle_types.h"
 #include "grackle_chemistry_data.h"
 #include "../phys_constants.h"
-#include "calc_temp1d_cloudy_g.h"
+#include "interop_funcs.h"
 
 
 typedef long long gr_int64;

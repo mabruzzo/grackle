@@ -12,7 +12,7 @@
 
 extern "C" {
   #include <grackle.h>
-  #include "../../clib/interop/calc_temp1d_cloudy_g.h"
+  #include "../../clib/interop/interop_funcs.h"
   #include "../../clib/grackle_macros.h"
 
   // legacy version of the function
@@ -198,17 +198,15 @@ struct DummyGrackleConfig{
     my_chem.metal_cooling = 1;         // metal cooling on
     my_chem.UVbackground = 0;          // UV background on
 
-    // can't directly assign a string literal to char*
+
     if ((n_tab_dims <= 0) || (n_tab_dims > 3)) {
       error("n_tab_dims must lie be 1, 2, or 3\n");
     } else if (n_tab_dims <= 2) {
-      const char* tmp = "../../grackle_data_files/input/CloudyData_noUVB.h5";
-      my_chem.grackle_data_file = new char[strlen(tmp)+1];
-      strcpy(my_chem.grackle_data_file, tmp);
+      my_chem.grackle_data_file
+        = "../../grackle_data_files/input/CloudyData_noUVB.h5";
     } else {
-      const char* tmp = "../../grackle_data_files/input/CloudyData_UVB=HM2012.h5";
-      my_chem.grackle_data_file = new char[strlen(tmp)+1];
-      strcpy(my_chem.grackle_data_file, tmp);
+      my_chem.grackle_data_file =
+        "../../grackle_data_files/input/CloudyData_UVB=HM2012.h5";
     }
 
     chemistry_data_storage my_rates;
@@ -227,7 +225,8 @@ struct DummyGrackleConfig{
 
   ~DummyGrackleConfig() {
     _free_chemistry_data(&(this->chem_data), &(this->chem_rates));
-    delete[] (this->chem_data).grackle_data_file;
+    // don't deallocate (this->chem_data).grackle_data_file, that member is
+    // assigned a string-literal (it's not heap-allocated)
   }
 
   DummyGrackleConfig(const DummyGrackleConfig&) = delete;

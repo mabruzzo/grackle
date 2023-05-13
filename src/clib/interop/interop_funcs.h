@@ -1,7 +1,6 @@
-#ifndef FORTRAN_INTERFACE
 /***********************************************************************
 /
-/ Declare function to compute temperature of a 1D slice using a cloudy table
+/ C interfaces of internal interop functions (and helper functions)
 /
 /
 / Copyright (c) 2013, Enzo/Grackle Development Team.
@@ -11,11 +10,38 @@
 / The full license is in the file LICENSE, distributed with this
 / software.
 ************************************************************************/
-
-#ifndef __CALC_TEMP1D_CLOUDY_G_H
-#define __CALC_TEMP1D_CLOUDY_G_H
+#ifndef __INTEROP_FUNCS_H
+#define __INTEROP_FUNCS_H
 
 #include <stdint.h> // int32_t
+
+#include "grackle_macros.h"
+#include "grackle_types.h"
+
+typedef long long gr_int64;
+void FORTRAN_NAME(interpolate_1d_g)(
+        const double* input1, const gr_int64* gridDim,
+        const double* gridPar1, const double* dgridPar1,
+        const gr_int64* dataSize, const double* dataField,
+        double* value);
+
+void FORTRAN_NAME(interpolate_2d_g)(
+        const double* input1, const double* input2,
+        const gr_int64* gridDim,
+        const double* gridPar1, const double* dgridPar1,
+        const double* gridPar2, const double* dgridPar2,
+        const gr_int64* dataSize, const double* dataField,
+        double* value);
+
+void FORTRAN_NAME(interpolate_3Dz_g)(
+        const double* input1, const double* input2, const double* input3,
+        const gr_int64* gridDim,
+        const double* gridPar1, const double* dgridPar1,
+        const double* gridPar2, const double* dgridPar2,
+        const double* gridPar3, const double* dgridPar3,
+        const gr_int64* dataSize, const double* dataField,
+        const gr_int64* end_int,
+        double* value);
 
 // in the future, we will define GR_RESTRICT to be the restrict keyword
 // introduced in C99 (or compiler-specific alternatives). For now, haven't done
@@ -84,59 +110,4 @@ void calc_temp1d_cloudy_g(
         const double* clMMW,
         const int32_t* itmask);
 
-#endif /*__CALC_TEMP1D_CLOUDY_G_H */
-
-#else
-
-! we explicitly avoid the header guards inclusion guards here
-! - it is not clear how nicely those would play with the including
-!   this file in multiple fortran functions/subroutines in a single
-!   file
-!
-! before including this header, be sure that:
-!   1. you have invoked ``USE ISO_C_BINDING``
-!   2. grackle_fortran_types.def has already been included
-
-      interface
-        subroutine calc_temp1d_cloudy_g(d, metal, e, rhoH,
-     &                in, jn, kn, is, ie, j, k,
-     &                tgas, mmw, dom, zr, 
-     &                temstart, temend,
-     &                gamma, utem, imetal,
-     &                clGridRank, clGridDim,
-     &                clPar1, clPar2, clPar3,
-     &                clDataSize, clMMW,
-     &                itmask) bind(C)
-          IMPORT
-          R_PREC, INTENT(IN) :: d(*)
-          R_PREC, INTENT(IN) :: metal(*)
-          R_PREC, INTENT(IN) :: e(*)
-          REAL(C_DOUBLE), INTENT(IN) :: rhoH(*)
-          INTEGER(C_INT), VALUE, INTENT(IN) :: in
-          INTEGER(C_INT), VALUE, INTENT(IN) :: jn
-          INTEGER(C_INT), VALUE, INTENT(IN) :: kn
-          INTEGER(C_INT), VALUE, INTENT(IN) :: is
-          INTEGER(C_INT), VALUE, INTENT(IN) :: ie
-          INTEGER(C_INT), VALUE, INTENT(IN) :: j
-          INTEGER(C_INT), VALUE, INTENT(IN) :: k
-          REAL(C_DOUBLE), INTENT(OUT) :: tgas(*)
-          REAL(C_DOUBLE), INTENT(OUT) :: mmw(*)
-          REAL(C_DOUBLE), VALUE, INTENT(IN) :: dom
-          REAL(C_DOUBLE), VALUE, INTENT(IN) :: zr
-          REAL(C_DOUBLE), VALUE, INTENT(IN) :: temstart
-          REAL(C_DOUBLE), VALUE, INTENT(IN) :: temend
-          REAL(C_DOUBLE), VALUE, INTENT(IN) :: gamma
-          REAL(C_DOUBLE), VALUE, INTENT(IN) :: utem
-          INTEGER(C_INT), VALUE, INTENT(IN) :: imetal
-          INTEGER(C_LONG_LONG), VALUE, INTENT(IN) :: clGridRank
-          INTEGER(C_LONG_LONG), INTENT(IN) :: clGridDim(*)
-          REAL(C_DOUBLE), INTENT(IN) :: clPar1(*)
-          REAL(C_DOUBLE), INTENT(IN) :: clPar2(*)
-          REAL(C_DOUBLE), INTENT(IN) :: clPar3(*)
-          INTEGER(C_LONG_LONG), VALUE, INTENT(IN) :: clDataSize
-          REAL(C_DOUBLE), INTENT(IN) :: clMMW(*)
-          INTEGER(C_INT32_T), INTENT(IN) :: itmask(*)
-        end subroutine calc_temp1d_cloudy_g
-      end interface
-
-#endif
+#endif /* __INTEROP_FUNCS_H */
