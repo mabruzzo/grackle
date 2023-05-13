@@ -41,4 +41,5 @@ OBJS_CONFIG_LIB = \
         rate_functions.lo \
         initialize_rates.lo \
         interop/shims_g.lo \
-        interop/calc_temp1d_cloudy_g.lo
+        interop/calc_temp1d_cloudy_g.lo \
+        interop/cool1d_cloudy_g.lo

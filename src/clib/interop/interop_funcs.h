@@ -110,4 +110,17 @@ void calc_temp1d_cloudy_g(
         const double* clMMW,
         const int32_t* itmask);
 
+void cool1d_cloudy_g(
+        const gr_float* d, // 3D arrays
+        const double* rhoH, const gr_float* metallicity, // 1D array
+        int in, int jn, int kn, int is, int ie, int j, int k,
+        const double* logtem, GR_RESTRICT double* edot, // 1D array
+        double comp2, double dom, double zr,
+        int icmbTfloor, int iClHeat, int iZscale,
+        long long clGridRank,
+        const long long* clGridDim,
+        const double* clPar1, const double* clPar2, const double* clPar3,
+        long long clDataSize, const double* clCooling, const double* clHeating,
+        const int32_t* itmask);
+
 #endif /* __INTEROP_FUNCS_H */

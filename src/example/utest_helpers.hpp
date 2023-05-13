@@ -171,7 +171,9 @@ struct DummyGrackleConfig{
   chemistry_data_storage chem_rates;
   code_units units;
 
-  DummyGrackleConfig(int n_tab_dims, double radiation_redshit) {
+  DummyGrackleConfig(int n_tab_dims, double radiation_redshit,
+                     bool UVbackground = false,
+                     bool cmb_temperature_floor = true) {
     // radiation_redshift is meaningless when n_tab_dims isn't 3
     
     // setup units!
@@ -192,8 +194,12 @@ struct DummyGrackleConfig{
     my_chem.with_radiative_cooling = 1; // cooling on
     my_chem.primordial_chemistry = 0;
     my_chem.metal_cooling = 1;         // metal cooling on
-    my_chem.UVbackground = 0;          // UV background on
+    my_chem.UVbackground = (UVbackground) ? 1 : 0;          // UV background on
+    my_chem.cmb_temperature_floor = (cmb_temperature_floor) ? 1 : 0;
 
+    if (UVbackground && (n_tab_dims != 3)) {
+      error("can't enable UVbackground without the redshift dependence");
+    }
 
     if ((n_tab_dims <= 0) || (n_tab_dims > 3)) {
       error("n_tab_dims must lie be 1, 2, or 3\n");
