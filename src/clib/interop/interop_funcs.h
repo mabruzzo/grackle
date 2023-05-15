@@ -33,11 +33,11 @@ void FORTRAN_NAME(interpolate_2d_g)(
         const gr_int64* dataSize, const double* dataField,
         double* value);
 
-void FORTRAN_NAME(interpolate_3Dz_g)(
+void FORTRAN_NAME(interpolate_3dz_g)(
         const double* input1, const double* input2, const double* input3,
         const gr_int64* gridDim,
         const double* gridPar1, const double* dgridPar1,
-        const double* gridPar2, const double* dgridPar2,
+        const double* gridPar2, const gr_int64* index2,
         const double* gridPar3, const double* dgridPar3,
         const gr_int64* dataSize, const double* dataField,
         const gr_int64* end_int,
@@ -54,6 +54,45 @@ void FORTRAN_NAME(interpolate_3Dz_g)(
 #ifndef GR_RESTRICT
 #define GR_RESTRICT /* ... */
 #endif /* GR_RESTRICT */
+
+
+// helper function that retrieves index for redshift dimension (of cloudy
+// tables) via bisection
+// - the index is one-indexed
+// - the names of variables have not been changed for backwards compatibility
+//   (it may seem counter-intuitive that clGridDim[1] gives the length of
+//    clPar2, but that's because in Fortran you would access clGridDim(2) )
+// - NOTE: since we define this function in a header, we must declare it as
+//   static inline (in C++ we could just declare it as inline)
+static inline long long find_zindex(double zr, long long clGridRank,
+                                    const long long* clGridDim,
+                                    const double* clPar2){
+  if (clGridRank > 2){
+    long long zindex;
+    if (zr <= clPar2[0]) {
+      zindex = 1;
+    } else if (zr >= clPar2[clGridDim[1]-2]) {
+      zindex = clGridDim[1];
+    } else if (zr >= clPar2[clGridDim[1]-3]) {
+      zindex = clGridDim[1] - 2;
+    } else {
+      zindex = 1;
+      long long zhighpt = clGridDim[1] - 2;
+      while ((zhighpt - zindex) > 1) {
+        long long zmidpt = (long long)((zhighpt + zindex) / 2);
+        if (zr >= clPar2[zmidpt-1]){
+          zindex = zmidpt;
+        } else {
+          zhighpt = zmidpt;
+        }
+      }
+    }
+    return zindex;
+  } else {
+    return 1;
+  }
+}
+
 
 /// Calculate temperature and mean molecular weight for tabulated cooling.
 /// @details This performs a calculation for a 1D slice from a 3D field.

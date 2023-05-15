@@ -15,44 +15,9 @@
 #include <stdint.h> // int32_t
 #include <stdio.h>
 #include <math.h> // log, log10
-#include "grackle_chemistry_data.h"
+#include "../grackle_chemistry_data.h"
 #include "../phys_constants.h"
-#include "interop_funcs.h"
-
-
-// Get index for redshift dimension via bisection
-// - the index is one-indexed
-// - the names of variables have not been changed for backwards compatibility
-//   (it may seem counter-intuitive that clGridDim[1] gives the length of
-//    clPar2, but that's because in Fortran you would access clGridDim(2) )
-static long long find_zindex(double zr, long long clGridRank,
-                             const long long* clGridDim,
-                             const double* clPar2){
-  if (clGridRank > 2){
-    long long zindex;
-    if (zr <= clPar2[0]) {
-      zindex = 1;
-    } else if (zr >= clPar2[clGridDim[1]-2]) {
-      zindex = clGridDim[1];
-    } else if (zr >= clPar2[clGridDim[1]-3]) {
-      zindex = clGridDim[1] - 2;
-    } else {
-      zindex = 1;
-      long long zhighpt = clGridDim[1] - 2;
-      while ((zhighpt - zindex) > 1) {
-        long long zmidpt = (long long)((zhighpt + zindex) / 2);
-        if (zr >= clPar2[zmidpt-1]){
-          zindex = zmidpt;
-        } else {
-          zhighpt = zmidpt;
-        }
-      }
-    }
-    return zindex;
-  } else {
-    return 1;
-  }
-}
+#include "./interop_funcs.h"
 
 void cool1d_cloudy_g(
         const gr_float* d, // 3D arrays
