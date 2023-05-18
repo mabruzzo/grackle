@@ -16,6 +16,9 @@ extern "C" {
   #include "../clib/grackle_macros.h"
 }
 
+#undef max
+#undef min
+
 [[noreturn]] void error(const char *fmt, ...){
 
   // parse argument list
