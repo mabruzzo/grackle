@@ -125,8 +125,6 @@ std::vector<double> run_test(DummyGrackleConfig& config,
   std::vector<double> edot(length, 0.0); // all outputs are set to 0
   // now we actually compute the cooling time
   if (use_fortran) {
-    // do nothing
-
     FORTRAN_NAME(cool1d_cloudy_g)(
         density.data(), // 3D arrays
         rhoH.data(), metallicity.data(), // 1D array
@@ -143,7 +141,6 @@ std::vector<double> run_test(DummyGrackleConfig& config,
         cloudy_data.cooling_data, // clCooling
         cloudy_data.heating_data, // clHeating
         itmask.data());
-
   } else {
     cool1d_cloudy_g(
         density.data(), // 3D arrays
