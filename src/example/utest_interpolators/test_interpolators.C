@@ -185,7 +185,7 @@ double run_interp(const std::vector<double>& val_vec,
     } else {
       interpolate_1d_g(val_vec[0], gridDim,
                        gridPar1, dgridPar1,
-                       &dataSize, dataField,
+                       dataSize, dataField,
                        &out);
     }
   } else if (rank == 2) {
@@ -201,7 +201,7 @@ double run_interp(const std::vector<double>& val_vec,
                        gridDim,
                        gridPar1, dgridPar1,
                        gridPar2, dgridPar2,
-                       &dataSize, dataField,
+                       dataSize, dataField,
                        &out);
     }
   } else if (rank == 3) {
@@ -219,7 +219,7 @@ double run_interp(const std::vector<double>& val_vec,
                        gridPar1, dgridPar1,
                        gridPar2, dgridPar2,
                        gridPar3, dgridPar3,
-                       &dataSize, dataField,
+                       dataSize, dataField,
                        &out);
     }
   } else if (rank == 4) {
@@ -241,7 +241,7 @@ double run_interp(const std::vector<double>& val_vec,
                        gridPar2, dgridPar2,
                        gridPar3, dgridPar3,
                        gridPar4, dgridPar4,
-                       &dataSize, dataField,
+                       dataSize, dataField,
                        &out);
     }
   } else {
@@ -265,7 +265,7 @@ double run_interp(const std::vector<double>& val_vec,
                        gridPar3, dgridPar3,
                        gridPar4, dgridPar4,
                        gridPar5, dgridPar5,
-                       &dataSize, dataField,
+                       dataSize, dataField,
                        &out);
     }
   }
@@ -323,8 +323,8 @@ double run_interp_3dz(const std::vector<double>& val_vec,
                       gridPar1, dgridPar1,
                       gridPar2, zindex,
                       gridPar3, dgridPar3,
-                      &dataSize, dataField,
-                      &end_int, &out);
+                      dataSize, dataField,
+                      end_int, &out);
   }
   return out;
 }

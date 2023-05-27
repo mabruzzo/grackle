@@ -68,21 +68,21 @@ void cool1d_cloudy_g(
     if (clGridRank == 1) { // Interpolate over temperature.
       interpolate_1d_g(log10tem, clGridDim,
                        clPar1, dclPar[0],
-                       &clDataSize, clCooling, &log_cool);
+                       clDataSize, clCooling, &log_cool);
       edot_met = -1.0 * pow(10.0,log_cool);
 
       // Ignore CMB term if T >> T_CMB
       if ((icmbTfloor == 1) && ((log10tem - log10_tCMB) < 2.0)) {
         interpolate_1d_g(log10_tCMB, clGridDim,
                          clPar1, dclPar[0],
-                         &clDataSize, clCooling, &log_cool_cmb);
+                         clDataSize, clCooling, &log_cool_cmb);
         edot_met += pow(10.0,log_cool_cmb);
       }
 
       if (get_heat == 1){
         interpolate_1d_g(log10tem, clGridDim,
                          clPar1, dclPar[0],
-                         &clDataSize, clHeating, &log_heat);
+                         clDataSize, clHeating, &log_heat);
         edot_met += pow(10.0,log_heat);
       }
 
@@ -91,7 +91,7 @@ void cool1d_cloudy_g(
                        clGridDim,
                        clPar1, dclPar[0],
                        clPar2, dclPar[1],
-                       &clDataSize, clCooling, &log_cool);
+                       clDataSize, clCooling, &log_cool);
       edot_met = -1.0 * pow(10.0,log_cool);
 
       // Ignore CMB term if T >> T_CMB
@@ -100,7 +100,7 @@ void cool1d_cloudy_g(
                          clGridDim,
                          clPar1, dclPar[0],
                          clPar2, dclPar[1],
-                         &clDataSize, clCooling, &log_cool_cmb);
+                         clDataSize, clCooling, &log_cool_cmb);
         edot_met += pow(10.0,log_cool_cmb);
       }
 
@@ -109,7 +109,7 @@ void cool1d_cloudy_g(
                          clGridDim,
                          clPar1, dclPar[0],
                          clPar2, dclPar[1],
-                         &clDataSize, clHeating, &log_heat);
+                         clDataSize, clHeating, &log_heat);
         edot_met += pow(10.0,log_heat);
       }
 
@@ -120,8 +120,8 @@ void cool1d_cloudy_g(
                         clPar1, dclPar[0],
                         clPar2, zindex,
                         clPar3, dclPar[2],
-                        &clDataSize, clCooling,
-                        &end_int, &log_cool);
+                        clDataSize, clCooling,
+                        end_int, &log_cool);
       edot_met = -1.0 * pow(10.0,log_cool);
 
       // Ignore CMB term if T >> T_CMB
@@ -131,8 +131,8 @@ void cool1d_cloudy_g(
                           clPar1, dclPar[0],
                           clPar2, zindex,
                           clPar3, dclPar[2],
-                          &clDataSize, clCooling,
-                          &end_int, &log_cool_cmb);
+                          clDataSize, clCooling,
+                          end_int, &log_cool_cmb);
         edot_met += pow(10.0,log_cool_cmb);
       }
 
@@ -142,8 +142,8 @@ void cool1d_cloudy_g(
                           clPar1, dclPar[0],
                           clPar2, zindex,
                           clPar3, dclPar[2],
-                          &clDataSize, clHeating,
-                          &end_int, &log_heat);
+                          clDataSize, clHeating,
+                          end_int, &log_heat);
         edot_met += pow(10.0,log_heat);
       }
 

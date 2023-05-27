@@ -76,13 +76,13 @@ void calc_temp1d_cloudy_g(
       if (clGridRank == 1) { // Interpolate over temperature.
         interpolate_1d_g(log10tem, clGridDim,
                          clPar1, dclPar[0],
-                         &clDataSize, clMMW, &munew);
+                         clDataSize, clMMW, &munew);
       } else if ( clGridRank == 2) { // Interpolate over density & temperature.
         interpolate_2d_g(log_n_h, log10tem,
                          clGridDim,
                          clPar1, dclPar[0],
                          clPar2, dclPar[1],
-                         &clDataSize, clMMW, &munew);
+                         clDataSize, clMMW, &munew);
       } else if (clGridRank == 3) { // Interpolate over density, redshift,
                                     // & temperature.
         interpolate_3dz_g(log_n_h, zr, log10tem,
@@ -90,8 +90,8 @@ void calc_temp1d_cloudy_g(
                           clPar1, dclPar[0],
                           clPar2, zindex,
                           clPar3, dclPar[2],
-                          &clDataSize, clMMW,
-                          &end_int, &munew);
+                          clDataSize, clMMW,
+                          end_int, &munew);
       } else {
         // no need to be within an openmp critical section
         printf("Maximum mmw data grid rank is 3!\n");
