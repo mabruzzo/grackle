@@ -66,28 +66,28 @@ void cool1d_cloudy_g(
 
     // Call interpolation functions to get heating and cooling
     if (clGridRank == 1) { // Interpolate over temperature.
-      interpolate_1d_g(&log10tem, clGridDim,
+      interpolate_1d_g(log10tem, clGridDim,
                        clPar1, &dclPar[0],
                        &clDataSize, clCooling, &log_cool);
       edot_met = -1.0 * pow(10.0,log_cool);
 
       // Ignore CMB term if T >> T_CMB
       if ((icmbTfloor == 1) && ((log10tem - log10_tCMB) < 2.0)) {
-        interpolate_1d_g(&log10_tCMB, clGridDim,
+        interpolate_1d_g(log10_tCMB, clGridDim,
                          clPar1, &dclPar[0],
                          &clDataSize, clCooling, &log_cool_cmb);
         edot_met += pow(10.0,log_cool_cmb);
       }
 
       if (get_heat == 1){
-        interpolate_1d_g(&log10tem, clGridDim,
+        interpolate_1d_g(log10tem, clGridDim,
                          clPar1, &dclPar[0],
                          &clDataSize, clHeating, &log_heat);
         edot_met += pow(10.0,log_heat);
       }
 
     } else if ( clGridRank == 2) { // Interpolate over density & temperature.
-      interpolate_2d_g(&log_n_h, &log10tem,
+      interpolate_2d_g(log_n_h, log10tem,
                        clGridDim,
                        clPar1, &dclPar[0],
                        clPar2, &dclPar[1],
@@ -96,7 +96,7 @@ void cool1d_cloudy_g(
 
       // Ignore CMB term if T >> T_CMB
       if ((icmbTfloor == 1) && ((log10tem - log10_tCMB) < 2.0)) {
-        interpolate_2d_g(&log_n_h, &log10_tCMB,
+        interpolate_2d_g(log_n_h, log10_tCMB,
                          clGridDim,
                          clPar1, &dclPar[0],
                          clPar2, &dclPar[1],
@@ -105,7 +105,7 @@ void cool1d_cloudy_g(
       }
 
       if (get_heat == 1){
-        interpolate_2d_g(&log_n_h, &log10tem,
+        interpolate_2d_g(log_n_h, log10tem,
                          clGridDim,
                          clPar1, &dclPar[0],
                          clPar2, &dclPar[1],
@@ -115,7 +115,7 @@ void cool1d_cloudy_g(
 
     } else if ( clGridRank == 3) { // Interpolate over density, redshift,
                                    // & temperature.
-      interpolate_3dz_g(&log_n_h, &zr, &log10tem,
+      interpolate_3dz_g(log_n_h, zr, log10tem,
                         clGridDim,
                         clPar1, &dclPar[0],
                         clPar2, &zindex,
@@ -126,7 +126,7 @@ void cool1d_cloudy_g(
 
       // Ignore CMB term if T >> T_CMB
       if ((icmbTfloor == 1) && ((log10tem - log10_tCMB) < 2.0)) {
-        interpolate_3dz_g(&log_n_h, &zr, &log10_tCMB,
+        interpolate_3dz_g(log_n_h, zr, log10_tCMB,
                           clGridDim,
                           clPar1, &dclPar[0],
                           clPar2, &zindex,
@@ -137,7 +137,7 @@ void cool1d_cloudy_g(
       }
 
       if (get_heat == 1){
-        interpolate_3dz_g(&log_n_h, &zr, &log10tem,
+        interpolate_3dz_g(log_n_h, zr, log10tem,
                           clGridDim,
                           clPar1, &dclPar[0],
                           clPar2, &zindex,
