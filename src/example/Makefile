@@ -174,7 +174,8 @@ fortran_example: $(MODULES) fortran_example.o
 
 TEST_CALC_TEMP1D_CLOUDY_OBJ = \
 	utest_calc_temp1d_cloudy/test_calc_temp1d.o \
-	utest_calc_temp1d_cloudy/calc_temp1d_cloudy_g.o
+	utest_calc_temp1d_cloudy/calc_temp1d_cloudy_g.o \
+	utest_interpolators/interpolators_g.o
 
 test_calc_temp1d_cloudy: $(TEST_CALC_TEMP1D_CLOUDY_OBJ) utest_helpers.hpp
 	@rm -f $@
@@ -196,7 +197,8 @@ test_calc_temp1d_cloudy: $(TEST_CALC_TEMP1D_CLOUDY_OBJ) utest_helpers.hpp
 
 TEST_COOL1D_CLOUDY_OBJ = \
 	utest_cool1d_cloudy/test_cool1d_cloudy.o \
-	utest_cool1d_cloudy/cool1d_cloudy_g.o
+	utest_cool1d_cloudy/cool1d_cloudy_g.o \
+	utest_interpolators/interpolators_g.o
 
 test_cool1d_cloudy: $(TEST_COOL1D_CLOUDY_OBJ) utest_helpers.hpp
 	@rm -f $@

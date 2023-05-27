@@ -13,8 +13,6 @@ extern "C" {
 
 #include "../../clib/interop/interop_funcs.h"
 
-// These first 3 functions are already declared in the above header
-/*
 void FORTRAN_NAME(interpolate_1d_g)(
         const double* input1, const gr_int64* gridDim,
         const double* gridPar1, const double* dgridPar1,
@@ -38,7 +36,6 @@ void FORTRAN_NAME(interpolate_3dz_g)(
         const gr_int64* dataSize, const double* dataField,
         const gr_int64* end_int,
         double* value);
-*/
 
 void FORTRAN_NAME(interpolate_3d_g)(
         const double* input1, const double* input2, const double* input3,
@@ -72,61 +69,6 @@ void FORTRAN_NAME(interpolate_5d_g)(
         const gr_int64* dataSize, const double* dataField,
         double* value);
 
-
-// TODO: put the remaining function declarations into this header!
-
-void interpolate_1d_g(const double* input1_p,
-                      const gr_int64* gridDim, // 1 elements
-                      const double* gridPar1, const double* dgridPar1_p,
-                      const gr_int64* dataSize, const double* dataField,
-                      double* value);
-
-void interpolate_2d_g(const double* input1_p, const double* input2_p,
-                      const gr_int64* gridDim, // 2 elements
-                      const double* gridPar1, const double* dgridPar1_p,
-                      const double* gridPar2, const double* dgridPar2_p,
-                      const gr_int64* dataSize, const double* dataField,
-                      double* value);
-
-void interpolate_3dz_g(const double* input1_p, const double* input2_p,
-                       const double* input3_p,
-                       const gr_int64* gridDim, // 3 elements
-                       const double* gridPar1, const double* dgridPar1_p,
-                       const double* gridPar2, const gr_int64* index2_p,
-                       const double* gridPar3, const double* dgridPar3_p,
-                       const gr_int64* dataSize, const double* dataField,
-                       const gr_int64* end_int_p, double* value);
-
-void interpolate_3d_g(const double* input1_p, const double* input2_p,
-                      const double* input3_p,
-                      const gr_int64* gridDim, // 3 elements
-                      const double* gridPar1, const double* dgridPar1_p,
-                      const double* gridPar2, const double* dgridPar2_p,
-                      const double* gridPar3, const double* dgridPar3_p,
-                      const gr_int64* dataSize, const double* dataField,
-                      double* value);
-
-void interpolate_4d_g(const double* input1_p, const double* input2_p,
-                      const double* input3_p, const double* input4_p,
-                      const gr_int64* gridDim, // 4 elements
-                      const double* gridPar1, const double* dgridPar1_p,
-                      const double* gridPar2, const double* dgridPar2_p,
-                      const double* gridPar3, const double* dgridPar3_p,
-                      const double* gridPar4, const double* dgridPar4_p,
-                      const gr_int64* dataSize, const double* dataField,
-                      double* value);
-
-void interpolate_5d_g(const double* input1_p, const double* input2_p,
-                      const double* input3_p, const double* input4_p,
-                      const double* input5_p,
-                      const gr_int64* gridDim, // 5 elements
-                      const double* gridPar1, const double* dgridPar1_p,
-                      const double* gridPar2, const double* dgridPar2_p,
-                      const double* gridPar3, const double* dgridPar3_p,
-                      const double* gridPar4, const double* dgridPar4_p,
-                      const double* gridPar5, const double* dgridPar5_p,
-                      const gr_int64* dataSize, const double* dataField,
-                      double* value);
 }
   
 

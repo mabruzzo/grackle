@@ -32,7 +32,6 @@ OBJS_CONFIG_LIB = \
         initialize_chemistry_data.lo \
         initialize_cloudy_data.lo \
         initialize_UVbackground_data.lo \
-        interpolators_g.lo \
         set_default_chemistry_parameters.lo \
         solve_chemistry.lo \
         solve_rate_cool_g.lo \
@@ -41,4 +40,5 @@ OBJS_CONFIG_LIB = \
         initialize_rates.lo \
         interop/shims_g.lo \
         interop/calc_temp1d_cloudy_g.lo \
-        interop/cool1d_cloudy_g.lo
+        interop/cool1d_cloudy_g.lo \
+        interop/interpolators_g.lo
