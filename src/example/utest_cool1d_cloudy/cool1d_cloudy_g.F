@@ -1,7 +1,10 @@
 !=======================================================================
 !////////////////////  SUBROUTINE COOL1D_CLOUDY_G  \\\\\\\\\\\\\\\\\\\\\
 
-      subroutine cool1d_cloudy_g(d, rhoH, metallicity,
+! NOTE: "_fortran" has been appended to the name of this subroutine to avoid
+!     name collisions when we include interop_funcs.def file
+
+      subroutine cool1d_cloudy_g_fortran(d, rhoH, metallicity,
      &                in, jn, kn, is, ie, j, k,
      &                logtem, edot, comp2, dom, zr,
      &                icmbTfloor, iClHeat, iZscale,
@@ -52,8 +55,10 @@
 !
 !-----------------------------------------------------------------------
 
+      USE ISO_C_BINDING
       implicit NONE
 #include "../../clib/grackle_fortran_types.def"
+#include "../../clib/interop/interop_funcs.def"
 
 !  General Arguments
 

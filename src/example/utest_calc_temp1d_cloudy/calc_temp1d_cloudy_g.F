@@ -1,7 +1,10 @@
 !=======================================================================
 !//////////////////  SUBROUTINE CALC_TEMP1D_CLOUDY_G  \\\\\\\\\\\\\\\\\\
 
-      subroutine calc_temp1d_cloudy_g(d, metal, e, rhoH,
+! NOTE: "_fortran" has been appended to the name of this subroutine to avoid
+!     name collisions when we include interop_funcs.def file
+
+      subroutine calc_temp1d_cloudy_g_fortran(d, metal, e, rhoH,
      &                in, jn, kn, is, ie, j, k,
      &                tgas, mmw, dom, zr, 
      &                temstart, temend,
@@ -55,8 +58,10 @@
 !
 !-----------------------------------------------------------------------
 
+      USE ISO_C_BINDING
       implicit NONE
 #include "../../clib/grackle_fortran_types.def"
+#include "../../clib/interop/interop_funcs.def"
 
 !  General Arguments
 
