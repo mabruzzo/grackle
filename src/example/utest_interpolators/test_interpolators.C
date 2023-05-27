@@ -184,7 +184,7 @@ double run_interp(const std::vector<double>& val_vec,
                                      &out);
     } else {
       interpolate_1d_g(val_vec[0], gridDim,
-                       gridPar1, &dgridPar1,
+                       gridPar1, dgridPar1,
                        &dataSize, dataField,
                        &out);
     }
@@ -199,8 +199,8 @@ double run_interp(const std::vector<double>& val_vec,
     } else {
       interpolate_2d_g(val_vec[0], val_vec[1],
                        gridDim,
-                       gridPar1, &dgridPar1,
-                       gridPar2, &dgridPar2,
+                       gridPar1, dgridPar1,
+                       gridPar2, dgridPar2,
                        &dataSize, dataField,
                        &out);
     }
@@ -216,9 +216,9 @@ double run_interp(const std::vector<double>& val_vec,
     } else {
       interpolate_3d_g(val_vec[0], val_vec[1], val_vec[2],
                        gridDim,
-                       gridPar1, &dgridPar1,
-                       gridPar2, &dgridPar2,
-                       gridPar3, &dgridPar3,
+                       gridPar1, dgridPar1,
+                       gridPar2, dgridPar2,
+                       gridPar3, dgridPar3,
                        &dataSize, dataField,
                        &out);
     }
@@ -237,10 +237,10 @@ double run_interp(const std::vector<double>& val_vec,
       interpolate_4d_g(val_vec[0], val_vec[1], val_vec[2],
                        val_vec[3],
                        gridDim,
-                       gridPar1, &dgridPar1,
-                       gridPar2, &dgridPar2,
-                       gridPar3, &dgridPar3,
-                       gridPar4, &dgridPar4,
+                       gridPar1, dgridPar1,
+                       gridPar2, dgridPar2,
+                       gridPar3, dgridPar3,
+                       gridPar4, dgridPar4,
                        &dataSize, dataField,
                        &out);
     }
@@ -260,11 +260,11 @@ double run_interp(const std::vector<double>& val_vec,
       interpolate_5d_g(val_vec[0], val_vec[1], val_vec[2],
                        val_vec[3], val_vec[4],
                        gridDim,
-                       gridPar1, &dgridPar1,
-                       gridPar2, &dgridPar2,
-                       gridPar3, &dgridPar3,
-                       gridPar4, &dgridPar4,
-                       gridPar5, &dgridPar5,
+                       gridPar1, dgridPar1,
+                       gridPar2, dgridPar2,
+                       gridPar3, dgridPar3,
+                       gridPar4, dgridPar4,
+                       gridPar5, dgridPar5,
                        &dataSize, dataField,
                        &out);
     }
@@ -320,9 +320,9 @@ double run_interp_3dz(const std::vector<double>& val_vec,
   } else {
     interpolate_3dz_g(val_vec[0], zr, val_vec[2],
                       gridDim,
-                      gridPar1, &dgridPar1,
-                      gridPar2, &zindex,
-                      gridPar3, &dgridPar3,
+                      gridPar1, dgridPar1,
+                      gridPar2, zindex,
+                      gridPar3, dgridPar3,
                       &dataSize, dataField,
                       &end_int, &out);
   }
