@@ -468,11 +468,18 @@ void run_test(const InterpTable& table, const bool use_3dz = false)
     {
       std::vector<double> ref, actual;
       if (use_3dz) {
-        std::vector<double> ref = run_interp_3dz(inputs, table, true);
-        std::vector<double> actual = run_interp_3dz(inputs, table, false);
+        ref = run_interp_3dz(inputs, table, true);
+        actual = run_interp_3dz(inputs, table, false);
       } else {
-        std::vector<double> ref = run_interp(inputs, table, true);
-        std::vector<double> actual = run_interp(inputs, table, false);
+        ref = run_interp(inputs, table, true);
+        actual = run_interp(inputs, table, false);
+      }
+
+      if (false) {
+        std::string ref_s = vec_to_string(ref);
+        std::string actual_s = vec_to_string(actual);
+        std::printf("   reference: %s\n", ref_s.c_str());
+        std::printf("   actual: %s\n", actual_s.c_str());
       }
       compare_values(actual, ref, 0.0, 0.0, "");
     };
