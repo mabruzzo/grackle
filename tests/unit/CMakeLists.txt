@@ -1,6 +1,7 @@
 add_executable(runInterpolationTests test_interpolators_g.cpp)# ${PROJECT_SOURCE_DIR}/src/clib/c_wrappers/wrap_interpolators_g.c)
-target_link_libraries(runInterpolationTests grackle gtest gtest_main hdf5)
-target_include_directories(runInterpolationTests PRIVATE ${PROJECT_SOURCE_DIR}/src/clib)
+target_link_libraries(runInterpolationTests
+  testable_grackle gtest gtest_main)
+
 
 add_test(NAME Interpolate1D COMMAND runInterpolationTests)
 add_test(NAME Interpolate2D COMMAND runInterpolationTests)
