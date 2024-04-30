@@ -1,4 +1,4 @@
 add_executable(runLocalSolveChemistryTest test_local_solve_chemistry.cpp)
 target_link_libraries(runLocalSolveChemistryTest
-  Grackle::Grackle gtest gtest_main)
+  Grackle::Grackle GTest::gtest_main)
 add_test(NAME LocalSolveChemistryMain COMMAND runLocalSolveChemistryTest)
