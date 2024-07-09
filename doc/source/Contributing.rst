@@ -1,5 +1,33 @@
 .. include:: ../../CONTRIBUTING.rst
 
+Style Formatting
+----------------
+All C/C++/python code contributed in new files will be formatted by automated tools (for the time being, code in older files will not be formatted to avoid merge-conflicts).
+
+The formatters are run by the `pre-commit.ci <https://pre-commit.ci/>`__ continuous integration tool.
+This form of continuous integration is built on top of the `pre-commit <https://pre-commit.com/>`__ framework, which is responsible for calling individual linting tools.
+
+In more detail:
+
+* python code is formatted by `https://github.com/astral-sh/ruff`__
+
+* C/C++ code is formatted by `clang-format <https://releases.llvm.org/17.0.1/tools/clang/docs/ClangFormat.html>`__.
+  Note: clang-format version is tied to the LLVM version number and different major versions are not necessarily compatible. 
+  If you want to manually invoke clang-format locally, you need to make sure you have **exactly** version 17.0.1 installed.
+  The easier way to invoke it directly is to rely upon the pre-commit software.
+
+At this time, we highly discourage manually invoking these linters (currently they aren't aware of which files to skip -- that information is only known to pre-commit).
+If you want to invoke these linters locally you should install the `pre-commit <https://pre-commit.com/>`__ python package and then invoke the following from the root of the Grackle directory
+
+.. code-block:: shell-session
+
+   ~/grackle $ pre-commit run --all-files
+
+The above command will install local copies of the required linting tools (and will manage local copies of them) and will then modify the files in your repository.
+
+Alternatively you can leave a comment on a PR that says ``pre-commit.ci autofix`` and pre-commit.ci will add a commit to your branch to fix formatting errors.
+
+
 .. _adding-new-params:
 
 Adding a New Parameter
