@@ -1,0 +1,69 @@
+
+# per discussion in GH-#218, we aren't applying formatters to old code yet (to avoid merge
+# conflicts) - maybe we start applying them after version
+exclude: "^(\
+config/configure_file.py\
+|config/query_version.py\
+|doc/source/conf.py\
+|src/python/examples/cooling_cell.py\
+|src/python/examples/cooling_rate.py\
+|src/python/examples/freefall.py\
+|src/python/examples/yt_grackle.py\
+|src/python/pygrackle/__init__.py\
+|src/python/pygrackle/api.py\
+|src/python/pygrackle/fluid_container.py\
+|src/python/pygrackle/utilities/__init__.py\
+|src/python/pygrackle/utilities/api.py\
+|src/python/pygrackle/utilities/convenience.py\
+|src/python/pygrackle/utilities/evolve.py\
+|src/python/pygrackle/utilities/misc.py\
+|src/python/pygrackle/utilities/physical_constants.py\
+|src/python/pygrackle/utilities/primordial_equilibrium.py\
+|src/python/pygrackle/utilities/testing.py\
+|src/python/pygrackle/utilities/units.py\
+|src/python/pygrackle/yt_fields.py\
+|src/python/setup.py\
+|src/python/tests/test_chemistry.py\
+|src/python/tests/test_chemistry_struct_synched.py\
+|src/python/tests/test_code_examples.py\
+|src/python/tests/test_dynamic_api.py\
+|src/python/tests/test_examples.py\
+|src/python/tests/test_get_grackle_version.py\
+|src/python/tests/test_initialisation.py\
+|src/python/tests/test_primordial.py\
+|src/python/tests/test_specific_heating_rate.py\
+|src/python/tests/test_volumetric_heating_rate.py\
+|src/python/pygrackle/grackle_defs.pxd\
+|src/python/pygrackle/grackle_wrapper.pyx\
+)"
+
+
+ci:
+    autofix_prs: false
+    autoupdate_schedule: monthly
+
+repos:
+
+# there are some other useful hooks we could enable from here in the future
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+    - id: check-executables-have-shebangs
+
+# settings adopted from yt
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.5.0
+  hooks:
+  - id: ruff-format
+    types_or: [ python, pyi, jupyter ]
+  - id: ruff
+    types_or: [ python, pyi, jupyter ]
+    args: [--fix, "--show-fixes"]
+
+# uncomment the following, when we stop excluding cython files
+# (settings adopted from yt)
+#- repo: https://github.com/MarcoGorelli/cython-lint
+#  rev: v0.16.2
+#  hooks:
+#  - id: cython-lint
+#    args: [--no-pycodestyle]
