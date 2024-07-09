@@ -35,6 +35,37 @@ config/configure_file.py\
 |src/python/tests/test_volumetric_heating_rate.py\
 |src/python/pygrackle/grackle_defs.pxd\
 |src/python/pygrackle/grackle_wrapper.pyx\
+|src/clib/calculate_cooling_time.c\
+|src/clib/calculate_dust_temperature.c\
+|src/clib/calculate_gamma.c\
+|src/clib/calculate_pressure.c\
+|src/clib/calculate_temperature.c\
+|src/clib/cie_thin_cooling_rate_tables.h\
+|src/clib/dynamic_api.c\
+|src/clib/grackle_macros.h\
+|src/clib/grackle_units.c\
+|src/clib/index_helper.c\
+|src/clib/index_helper.h\
+|src/clib/initialize_UVbackground_data.c\
+|src/clib/initialize_chemistry_data.c\
+|src/clib/initialize_cloudy_data.c\
+|src/clib/initialize_rates.c\
+|src/clib/phys_constants.h\
+|src/clib/rate_functions.c\
+|src/clib/set_default_chemistry_parameters.c\
+|src/clib/solve_chemistry.c\
+|src/clib/update_UVbackground_rates.c\
+|src/clib/utils.c\
+|src/clib/utils.h\
+|src/example/c_example.c\
+|src/example/c_local_example.c\
+|src/example/cxx_example.C\
+|src/example/cxx_grid_example.C\
+|src/example/cxx_omp_example.C\
+|src/include/grackle.h\
+|src/include/grackle_chemistry_data.h\
+|src/include/grackle_rate_functions.h\
+|src/include/grackle_types.h\
 )"
 
 
@@ -49,6 +80,17 @@ repos:
     rev: v4.6.0
     hooks:
     - id: check-executables-have-shebangs
+
+repos:
+-   repo: https://github.com/pre-commit/mirrors-clang-format
+    # unlike most pre-commit tools, the version of this repository exactly
+    # matches the version of clang-format
+    rev: v17.0.1
+    hooks:
+    -   id: clang-format
+        verbose: true
+        types_or: [c++, c]
+        args: ["-style=file", "--verbose"]
 
 # settings adopted from yt
 - repo: https://github.com/astral-sh/ruff-pre-commit
