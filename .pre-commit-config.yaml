@@ -55,8 +55,6 @@ config/configure_file.py\
 |src/clib/set_default_chemistry_parameters.c\
 |src/clib/solve_chemistry.c\
 |src/clib/update_UVbackground_rates.c\
-|src/clib/utils.c\
-|src/clib/utils.h\
 |src/example/c_example.c\
 |src/example/c_local_example.c\
 |src/example/cxx_example.C\
