@@ -9,7 +9,7 @@ This form of continuous integration is built on top of the `pre-commit <https://
 
 In more detail:
 
-* python code is formatted by `https://github.com/astral-sh/ruff`__
+* python code is formatted by `ruff <https://github.com/astral-sh/ruff>`__
 
 * C/C++ code is formatted by `clang-format <https://releases.llvm.org/17.0.1/tools/clang/docs/ClangFormat.html>`__.
   Note: clang-format version is tied to the LLVM version number and different major versions are not necessarily compatible. 
