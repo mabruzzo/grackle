@@ -1,71 +1,13 @@
 
-# per discussion in GH-#218, we aren't applying formatters to old code yet (to avoid merge
-# conflicts) - maybe we start applying them after version
+# per discussion in GH-#218, we aren't applying formatters to old code yet (to
+# avoid merge conflicts).
+# - most exclusions are specified in formtter-specific files (such as
+#   clang-format's .clang-format-ignore file)
+# - here we list the remaining files that should be excluded.
 exclude: "^(\
-config/configure_file.py\
-|config/query_version.py\
-|doc/source/conf.py\
-|src/python/examples/cooling_cell.py\
-|src/python/examples/cooling_rate.py\
-|src/python/examples/freefall.py\
-|src/python/examples/yt_grackle.py\
-|src/python/pygrackle/__init__.py\
-|src/python/pygrackle/api.py\
-|src/python/pygrackle/fluid_container.py\
-|src/python/pygrackle/utilities/__init__.py\
-|src/python/pygrackle/utilities/api.py\
-|src/python/pygrackle/utilities/convenience.py\
-|src/python/pygrackle/utilities/evolve.py\
-|src/python/pygrackle/utilities/misc.py\
-|src/python/pygrackle/utilities/physical_constants.py\
-|src/python/pygrackle/utilities/primordial_equilibrium.py\
-|src/python/pygrackle/utilities/testing.py\
-|src/python/pygrackle/utilities/units.py\
-|src/python/pygrackle/yt_fields.py\
-|src/python/setup.py\
-|src/python/tests/test_chemistry.py\
-|src/python/tests/test_chemistry_struct_synched.py\
-|src/python/tests/test_code_examples.py\
-|src/python/tests/test_dynamic_api.py\
-|src/python/tests/test_examples.py\
-|src/python/tests/test_get_grackle_version.py\
-|src/python/tests/test_initialisation.py\
-|src/python/tests/test_primordial.py\
-|src/python/tests/test_specific_heating_rate.py\
-|src/python/tests/test_volumetric_heating_rate.py\
-|src/python/pygrackle/grackle_defs.pxd\
+src/python/pygrackle/grackle_defs.pxd\
 |src/python/pygrackle/grackle_wrapper.pyx\
-|src/clib/calculate_cooling_time.c\
-|src/clib/calculate_dust_temperature.c\
-|src/clib/calculate_gamma.c\
-|src/clib/calculate_pressure.c\
-|src/clib/calculate_temperature.c\
-|src/clib/cie_thin_cooling_rate_tables.h\
-|src/clib/dynamic_api.c\
-|src/clib/grackle_macros.h\
-|src/clib/grackle_units.c\
-|src/clib/index_helper.c\
-|src/clib/index_helper.h\
-|src/clib/initialize_UVbackground_data.c\
-|src/clib/initialize_chemistry_data.c\
-|src/clib/initialize_cloudy_data.c\
-|src/clib/initialize_rates.c\
-|src/clib/phys_constants.h\
-|src/clib/rate_functions.c\
-|src/clib/set_default_chemistry_parameters.c\
-|src/clib/solve_chemistry.c\
-|src/clib/update_UVbackground_rates.c\
-|src/example/c_example.c\
-|src/example/c_local_example.c\
-|src/example/cxx_example.C\
-|src/example/cxx_grid_example.C\
-|src/example/cxx_omp_example.C\
-|src/include/grackle.h\
-|src/include/grackle_chemistry_data.h\
-|src/include/grackle_rate_functions.h\
-|src/include/grackle_types.h\
 )"
-
 
 ci:
     autofix_prs: false
@@ -83,7 +25,7 @@ repos:
 -   repo: https://github.com/pre-commit/mirrors-clang-format
     # unlike most pre-commit tools, the version of this repository exactly
     # matches the version of clang-format
-    rev: v17.0.1
+    rev: v18.1.3
     hooks:
     -   id: clang-format
         verbose: true
