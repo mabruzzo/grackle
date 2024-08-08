@@ -11,6 +11,16 @@ BasedOnStyle: Google
 # this is redundant, but this is specified to ensure that we remove all tabs
 UseTab: Never
 
+
+# inclusion-overrides:
+# --------------------
+# By default, the Google-style wants sort include-directives. All of Grackle's
+# header files should all be "self-contained" and reordering shouldn't matter.
+# But, this is something we should explicitly check at a later date.
+IncludeBlocks: Preserve
+SortIncludes: Never
+
+
 # overrides based on LLVM
 # -----------------------
 # tweaks indents/outdent of private, public, protected in C++ classes/structs
@@ -20,6 +30,3 @@ AccessModifierOffset: -2
 AlignEscapedNewlines: Right
 # be more definitive about the preferred pointer alignment
 DerivePointerAlignment: false
-# don't reorder include-statements (with that said, reordering shouldn't 
-# actually cause any problems for Grackle)
-IncludeBlocks: Preserve
