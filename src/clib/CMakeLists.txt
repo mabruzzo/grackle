@@ -97,38 +97,6 @@ add_library(Grackle_Grackle
   set_default_chemistry_parameters.c
   solve_chemistry.c
   update_UVbackground_rates.c
-  calculate_cooling_time.c
-  calculate_dust_temperature.c
-  calculate_gamma.c
-  calculate_pressure.c
-  calculate_temperature.c
-  dynamic_api.c
-  grackle_units.c
-  index_helper.c
-  initialize_chemistry_data.c
-  initialize_cloudy_data.c
-  initialize_rates.c
-  initialize_UVbackground_data.c
-  rate_functions.c
-  set_default_chemistry_parameters.c
-  solve_chemistry.c
-  update_UVbackground_rates.c
-  calculate_cooling_time.c
-  calculate_dust_temperature.c
-  calculate_gamma.c
-  calculate_pressure.c
-  calculate_temperature.c
-  dynamic_api.c
-  grackle_units.c
-  index_helper.c
-  initialize_chemistry_data.c
-  initialize_cloudy_data.c
-  initialize_rates.c
-  initialize_UVbackground_data.c
-  rate_functions.c
-  set_default_chemistry_parameters.c
-  solve_chemistry.c
-  update_UVbackground_rates.c
   utils.c
 
   # auto-generated C source files
@@ -204,21 +172,6 @@ add_library(Grackle_Grackle
 #   convention... (they are more useful if we built multiple targets as part of
 #   the build)
 add_library(Grackle::Grackle ALIAS Grackle_Grackle) # for inclusion appraoch #1
-
-# the logic diverges a little when naming the library
-if (BUILD_SHARED_LIBS)
-  # this is a crude-hack to make it easier to build the Pygrackle with the
-  # current setuptools build-system
-  # -> due to the custom naming of our shared library, the following makes a
-  #    symlink within the build-directory from the shared library to
-  #    libgrackle.so (or libgrackle.dylib on macOS).
-  # -> this is not idiomatic and the logic will be removed when GitHub PR #208
-  #    is merged (the documentation makes it clear you shouldn't use this!)
-  add_custom_target(buildtree_link_target
-    ALL COMMAND ${CMAKE_COMMAND} -E create_symlink
-      $<TARGET_FILE:Grackle_Grackle>
-      $<TARGET_FILE_DIR:Grackle_Grackle>/libgrackle$<TARGET_FILE_SUFFIX:Grackle_Grackle>)
-endif()
 
 # set standard cmake-specific properties
 set_target_properties(Grackle_Grackle PROPERTIES
