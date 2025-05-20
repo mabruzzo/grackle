@@ -31,17 +31,20 @@ from pygrackle.utilities.model_tests import \
 
 output_name = os.path.basename(__file__[:-3]) # strip off ".py"
 
-if __name__ == "__main__":
+def main(args=None, output_name=output_name):
+    args = sys.argv[1:] if args is None else args
     # If we are running the script through the testing framework,
     # then we will pass in two integers corresponding to the sets
     # of parameters and inputs.
-    if len(sys.argv) > 1:
-        par_index = int(sys.argv[1])
-        input_index = int(sys.argv[2])
+    if len(args) > 0:
+        par_index = int(args[0])
+        input_index = int(args[1])
         my_chemistry, input_set = get_model_set(
             output_name, par_index, input_index)
-        for var, val in input_set.items():
-            globals()[var] = val
+        metallicity = input_set["metallicity"]
+        redshift = input_set["redshift"]
+        specific_heating_rate = input_set["specific_heating_rate"]
+        volumetric_heating_rate = input_set["volumetric_heating_rate"]
         output_name = f"{output_name}_{par_index}_{input_index}"
         extra_attrs = {"format_version": model_test_format_version}
 
@@ -106,3 +109,7 @@ if __name__ == "__main__":
     pyplot.savefig(f"{output_name}.png")
     yt.save_as_dataset({}, filename=f"{output_name}.h5",
                        data=data, extra_attrs=extra_attrs)
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

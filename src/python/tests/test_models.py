@@ -1,3 +1,4 @@
+import functools
 import os
 import pytest
 import sys
@@ -10,7 +11,18 @@ from pygrackle.utilities.testing import run_command
 
 from testing_common import grackle_python_dir
 
-python_example_dir = os.path.join(grackle_python_dir, "examples")
+sys.path.append(os.path.join(grackle_python_dir, "examples"))
+from cooling_cell import main as _cooling_cell_main
+from cooling_rate import main as _cooling_rate_main
+from freefall import main as _freefall_main
+from yt_grackle import main as _yt_grackle_main
+
+model_fns = {
+    "cooling_cell" : _cooling_cell_main,
+    "cooling_rate" : _cooling_rate_main,
+    "freefall" : _freefall_main,
+    "yt_grackle" : _yt_grackle_main
+}
 
 # collect all of the python-examples and various model configurations into
 # a list of tuples
@@ -39,13 +51,17 @@ def test_model(answertestspec, tmp_path, model_name, par_index, input_index):
     if (model_name == "yt_grackle") and ("YT_DATA_DIR" not in os.environ):
         pytest.skip("YT_DATA_DIR env variable isn't defined")
 
-    script_path = os.path.join(python_example_dir, f"{model_name}.py")
-    command = f"{sys.executable} {script_path} {par_index} {input_index}"
+    # TODO: figure out how to instruct the examples where to store the results as a
+    #       function argument (so we can stop using os.chdir)
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    try:
+        return_val = model_fns[model_name](args=[str(par_index), str(input_index)])
+    finally:
+        os.chdir(original_cwd)
+    assert return_val == 0, "example didn't complete succesfully"
 
     if True:
-        rval = run_command(command, timeout=60, cwd=tmp_path)
-        assert rval, "example didn't complete succesfully"
-
         output_basename = f"{model_name}_{par_index}_{input_index}.h5"
         output_file = os.path.join(str(tmp_path), output_basename)
         answer_path = os.path.join(answertestspec.answer_dir, output_basename)
