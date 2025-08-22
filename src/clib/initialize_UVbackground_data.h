@@ -1,0 +1,25 @@
+/***********************************************************************
+/
+/ Declares the function to initialize the UV background data
+/
+/ Copyright (c) 2013, Enzo/Grackle Development Team.
+/
+/ Distributed under the terms of the Enzo Public Licence.
+/
+/ The full license is in the file LICENSE, distributed with this
+/ software.
+************************************************************************/
+
+#ifndef INITIALIZE_UVBACKGROUND_DATA_H
+#define INITIALIZE_UVBACKGROUND_DATA_H
+
+#include "grackle_chemistry_data.h"
+
+/// Initializes an empty UVBtable struct with zeros and NULLs.
+void initialize_empty_UVBtable_struct(UVBtable *table);
+
+/// Initialize UV Background data
+int initialize_UVbackground_data(chemistry_data *my_chemistry,
+                                 chemistry_data_storage *my_rates);
+
+#endif /* INITIALIZE_UVBACKGROUND_DATA_H */
