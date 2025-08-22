@@ -18,6 +18,7 @@
 #include <math.h>
 #include "grackle.h"
 #include "grackle_macros.h"
+#include "initialize_rates.h"
 #include "initialize_UVbackground_data.h"
 #include "phys_constants.h"
 
@@ -41,9 +42,6 @@ int initialize_cloudy_data(chemistry_data *my_chemistry,
                            cloudy_data *my_cloudy, char *group_name,
                            code_units *my_units,
                            int read_data);
-
-int initialize_rates(chemistry_data *my_chemistry, chemistry_data_storage *my_rates, code_units *my_units,
-                double co_length_units, double co_density_units);
 
 static void show_version(FILE *fp)
 {
