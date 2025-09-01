@@ -713,40 +713,40 @@ c -------------------------------------------------------------------
      &              , iH2shieldcustom, f_shield_custom
      &      )
 
-!           Compute dedot and HIdot, the rates of change of de and HI
-!             (should add itmask to this call)
-
-      if (imp_eng .eq. 1) then
-            call rate_timestep_g(
-     &                     dedot, HIdot, ispecies, anydust,
-     &                     de, HI, HII, HeI, HeII, HeIII, d,
-     &                     HM, H2I, H2II,
-     &                     local_in, local_jn, local_kn, local_is,
-     &                     local_ie, local_j, local_k,
-     &                     k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11,
-     &                     k12, k13, k14, k15, k16, k17, k18, k19, k22,
-     &                     k24, k25, k26, k27, k28, k29, k30,
-     &                     k50, k51, k52, k53, k54, k55, k56, k57, k58,
-     &                     h2dust, ncrn, ncrd1, ncrd2, rhoH,
-     &                     k24shield, k25shield, k26shield,
-     &                     k28shield, k29shield, k30shield, k31shield,
-     &                     iradtrans, irt_honly,
-     &                     kphHI, kphHeI, kphHeII,
-     &                     itmask, edot, chunit, dom, metal
-     &                   , HDI, imchem, CI, OI, OH, CO, H2O
-     &                   , idissHDI, kdissHDI, iionZ, kphCI, kphOI
-     &                   , idissZ, kdissCO, kdissOH, kdissH2O
-     &                         )
-      endif
-
-!     Initialize
-
-      dspdot = 0.d0
-
-
-!   Heating/cooling rate (per unit volume -> gas mass)
-
-      dspdot(i_eng) = edot / d
+!!           Compute dedot and HIdot, the rates of change of de and HI
+!!             (should add itmask to this call)
+!
+!      if (imp_eng .eq. 1) then
+!            call rate_timestep_g(
+!     &                     dedot, HIdot, ispecies, anydust,
+!     &                     de, HI, HII, HeI, HeII, HeIII, d,
+!     &                     HM, H2I, H2II,
+!     &                     local_in, local_jn, local_kn, local_is,
+!     &                     local_ie, local_j, local_k,
+!     &                     k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11,
+!     &                     k12, k13, k14, k15, k16, k17, k18, k19, k22,
+!     &                     k24, k25, k26, k27, k28, k29, k30,
+!     &                     k50, k51, k52, k53, k54, k55, k56, k57, k58,
+!     &                     h2dust, ncrn, ncrd1, ncrd2, rhoH,
+!     &                     k24shield, k25shield, k26shield,
+!     &                     k28shield, k29shield, k30shield, k31shield,
+!     &                     iradtrans, irt_honly,
+!     &                     kphHI, kphHeI, kphHeII,
+!     &                     itmask, edot, chunit, dom, metal
+!     &                   , HDI, imchem, CI, OI, OH, CO, H2O
+!     &                   , idissHDI, kdissHDI, iionZ, kphCI, kphOI
+!     &                   , idissZ, kdissCO, kdissOH, kdissH2O
+!     &                         )
+!      endif
+!
+!!     Initialize
+!
+!      dspdot = 0.d0
+!
+!
+!!   Heating/cooling rate (per unit volume -> gas mass)
+!
+!      dspdot(i_eng) = edot / d
 
 !   A) the 6-species integrator
 !      

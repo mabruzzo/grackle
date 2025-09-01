@@ -774,7 +774,7 @@ void lookup_cool_rates0d(
   local_ie = 0;
   local_j = 1;
   local_k = 1;
-/*
+
 
   // Compute the cooling rate, tgas, tdust, and metallicity for this row
 
@@ -1016,7 +1016,7 @@ void lookup_cool_rates0d(
   // Heating/cooling rate (per unit volume -> gas mass)
 
   dspdot[i_eng-1] = *(pack.other_scratch_buf.edot) / *(pack.fields.density);
-
+/*
   // A) the 6-species integrator
   if (my_chemistry->primordial_chemistry == 1)  {
 
