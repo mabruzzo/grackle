@@ -1251,7 +1251,10 @@ c --- (C) Now do extra 3-species for molecular hydrogen ---
                acoef = acoef
      &             + k150    *   HeI        /  4._DKIND
             endif
-          dspdot(9) = dspdot(9) + (scoef - acoef * H2II)
+          !write(*,*) 'scoef, acoef :: ', scoef, acoef
+          !write(*,*) 'dspdot =', scoef - acoef * H2II
+          !dspdot(9) = dspdot(9) + (scoef - acoef * H2II)
+          dspdot(9) = (scoef - acoef * H2II)
 
 
 

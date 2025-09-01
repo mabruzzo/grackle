@@ -1161,12 +1161,12 @@ void lookup_cool_rates0d(
 
 
 
-  /*
 
   // --- (C) Now do extra 3-species for molecular hydrogen ---
 
   if (my_chemistry->primordial_chemistry > 1)  {
 
+/*
     // First, do HI/HII with molecular hydrogen terms
 
 
@@ -1215,6 +1215,7 @@ void lookup_cool_rates0d(
         acoef = acoef + 2. * *(pack.other_scratch_buf.h2dust)    * *(pack.other_scratch_buf.rhoH);
       }
     }
+
     // contribution of minor species
     if (my_chemistry->primordial_chemistry > 2)  {
       scoef = scoef
@@ -1277,9 +1278,6 @@ void lookup_cool_rates0d(
           + kz43    *  COII        / 28.;
     }
     dspdot[2-1] = dspdot[2-1] + (scoef - acoef * HI);
-
-
-
 
 
 
@@ -1499,9 +1497,13 @@ void lookup_cool_rates0d(
     }
     dspdot[7-1] = dspdot[7-1] + (scoef - acoef * HM);
 
-
+*/
 
     // 9) H2+
+
+    //printf("metal_chemistry = %d, primordial_chemistry = %d\n",
+    //       my_chemistry->metal_chemistry,
+    //       my_chemistry->primordial_chemistry);
 
     scoef =    2.*( k9    *HI    *HII
                   +   k11   *H2I    /2.*HII
@@ -1518,17 +1520,14 @@ void lookup_cool_rates0d(
       acoef = acoef
           + k150    *   HeI        /  4.;
     }
+    printf(" scoef, acoef --    %.16e    %.17g\n",
+           scoef, acoef);
+    printf(" dspdot =  %.17g\n", scoef - acoef * H2II);
+    fflush(stdout);
     dspdot[9-1] = dspdot[9-1] + (scoef - acoef * H2II);
 
-
-
-
-
-
-
-
-
   }
+/*
 
   // --- (D) Now do extra 3-species for molecular HD ---
   if (my_chemistry->primordial_chemistry > 2)  {
