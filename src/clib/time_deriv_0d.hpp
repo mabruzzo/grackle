@@ -1102,7 +1102,6 @@ void lookup_cool_rates0d(
 
   }
 
-  /*
 
   // --- (B) Do helium chemistry in any case: (for all ispecies values) ---
 
@@ -1162,7 +1161,7 @@ void lookup_cool_rates0d(
 
 
 
-
+  /*
 
   // --- (C) Now do extra 3-species for molecular hydrogen ---
 

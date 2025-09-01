@@ -835,61 +835,61 @@ c -------------------------------------------------------------------
 !
 !      endif ! if (ispecies .eq. 1) then
 
-!  --- (B) Do helium chemistry in any case: (for all ispecies values) ---
-
-
-
-
-!        4) HeI
-
-         scoef  = k4   *HeII       *de       
-         acoef  = k3   *de       
-     &                + k26shield   
-
-         if ( (iradtrans .eq. 1) .and. (irt_honly .eq. 0))
-     &       acoef = acoef + kphHeI       
-         if (ispecies .gt. 3) then
-            scoef = scoef +  4._DKIND * ( 0._DKIND
-     &          + k152    * HeHII        *    HI        /  5._DKIND
-     &          + k153    * HeHII        *    de        /  5._DKIND
-     &         )
-            acoef = acoef
-     &          + k148    *   HII       
-     &          + k149    *   HII       
-     &          + k150    *  H2II        /  2._DKIND
-         endif
-          dspdot(4) = dspdot(4) + (scoef - acoef * HeI)
-
-
-!        5) HeII
-
-         scoef  = k3   *HeI    *de       
-     &          + k6   *HeIII       *de       
-     &          + k26shield   *HeI    
-
-         if ( (iradtrans .eq. 1) .and. (irt_honly .eq. 0))
-     &       scoef = scoef + kphHeI       *HeI    
-
-         acoef  = k4   *de        + k5   *de
-     &          + k25shield   
-
-         if ( (iradtrans .eq. 1) .and. (irt_honly .eq. 0))
-     &       acoef = acoef + kphHeII       
-         if (ispecies .gt. 3) then
-            acoef = acoef
-     &          + k151    *    HI       
-         endif
-          dspdot(5) = dspdot(5) + (scoef - acoef * HeII)
-
-
-!       6) HeIII
-
-         scoef   = k5   *HeII    *de       
-     &           + k25shield   *HeII    
-         if ((iradtrans .eq. 1) .and. (irt_honly .eq. 0))
-     &       scoef = scoef + kphHeII        * HeII    
-         acoef   = k6   *de       
-          dspdot(6) = dspdot(6) + (scoef - acoef * HeIII)
+!!  --- (B) Do helium chemistry in any case: (for all ispecies values) ---
+!
+!
+!
+!
+!!        4) HeI
+!
+!         scoef  = k4   *HeII       *de       
+!         acoef  = k3   *de       
+!     &                + k26shield   
+!
+!         if ( (iradtrans .eq. 1) .and. (irt_honly .eq. 0))
+!     &       acoef = acoef + kphHeI       
+!         if (ispecies .gt. 3) then
+!            scoef = scoef +  4._DKIND * ( 0._DKIND
+!     &          + k152    * HeHII        *    HI        /  5._DKIND
+!     &          + k153    * HeHII        *    de        /  5._DKIND
+!     &         )
+!            acoef = acoef
+!     &          + k148    *   HII       
+!     &          + k149    *   HII       
+!     &          + k150    *  H2II        /  2._DKIND
+!         endif
+!          dspdot(4) = dspdot(4) + (scoef - acoef * HeI)
+!
+!
+!!        5) HeII
+!
+!         scoef  = k3   *HeI    *de       
+!     &          + k6   *HeIII       *de       
+!     &          + k26shield   *HeI    
+!
+!         if ( (iradtrans .eq. 1) .and. (irt_honly .eq. 0))
+!     &       scoef = scoef + kphHeI       *HeI    
+!
+!         acoef  = k4   *de        + k5   *de
+!     &          + k25shield   
+!
+!         if ( (iradtrans .eq. 1) .and. (irt_honly .eq. 0))
+!     &       acoef = acoef + kphHeII       
+!         if (ispecies .gt. 3) then
+!            acoef = acoef
+!     &          + k151    *    HI       
+!         endif
+!          dspdot(5) = dspdot(5) + (scoef - acoef * HeII)
+!
+!
+!!       6) HeIII
+!
+!         scoef   = k5   *HeII    *de       
+!     &           + k25shield   *HeII    
+!         if ((iradtrans .eq. 1) .and. (irt_honly .eq. 0))
+!     &       scoef = scoef + kphHeII        * HeII    
+!         acoef   = k6   *de       
+!          dspdot(6) = dspdot(6) + (scoef - acoef * HeIII)
 
 
 
