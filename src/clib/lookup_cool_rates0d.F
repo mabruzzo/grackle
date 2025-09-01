@@ -748,92 +748,92 @@ c -------------------------------------------------------------------
 !
 !      dspdot(i_eng) = edot / d
 
-!   A) the 6-species integrator
-!      
-      if (ispecies .eq. 1) then
-
-
-
-
-!        1) HI
-
-            scoef  = k2   *HII       *de       
-            acoef  = k1   *de       
-     &             + k57   *HI       
-     &             + k58   *HeI       /4._DKIND
-     &             + k24shield   
-            if (iradtrans .eq. 1) acoef = acoef + kphHI       
-          dspdot(2) = dspdot(2) + (scoef - acoef * HI)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-!        2) HII
-c 
-            scoef  = k1   *HI    *de       
-     &             + k57   *HI    *HI    
-     &             + k58   *HI    *HeI       /4._DKIND
-     &             + k24shield   *HI    
-            if (iradtrans .eq. 1)
-     &          scoef = scoef + kphHI       *HI    
-            acoef  = k2   *de        
-          dspdot(3) = dspdot(3) + (scoef - acoef * HII)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-!        3) Electron density
-
-            scoef = 0._DKIND
-     &                 + k57   *HI    *HI    
-     &                 + k58   *HI    *HeI       /4._DKIND
-     &                 + k24shield   *HI       
-     &                 + k25shield   *HeII       /4._DKIND
-     &                 + k26shield   *HeI       /4._DKIND
-
-            if ( (iradtrans .eq. 1) .and. ( irt_honly .eq. 0) )
-     &          scoef = scoef + kphHI        * HI       
-     &                + kphHeI         * HeI         / 4._DKIND
-     &                + kphHeII        * HeII        / 4._DKIND
-            if ( (iradtrans .eq. 1) .and. ( irt_honly .eq. 1) )
-     &          scoef = scoef + kphHI        * HI       
-
-
-
-            acoef = -(k1   *HI             - k2   *HII       
-     &              + k3   *HeI       /4._DKIND -
-     &           k6   *HeIII       /4._DKIND
-     &              + k5   *HeII       /4._DKIND -
-     &           k4   *HeII       /4._DKIND)
-          dspdot(1) = dspdot(1) + (scoef - acoef * de)
-
-
-
-
-
-      endif ! if (ispecies .eq. 1) then
+!!   A) the 6-species integrator
+!!      
+!      if (ispecies .eq. 1) then
+!
+!
+!
+!
+!!        1) HI
+!
+!            scoef  = k2   *HII       *de       
+!            acoef  = k1   *de       
+!     &             + k57   *HI       
+!     &             + k58   *HeI       /4._DKIND
+!     &             + k24shield   
+!            if (iradtrans .eq. 1) acoef = acoef + kphHI       
+!          dspdot(2) = dspdot(2) + (scoef - acoef * HI)
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!!        2) HII
+!c 
+!            scoef  = k1   *HI    *de       
+!     &             + k57   *HI    *HI    
+!     &             + k58   *HI    *HeI       /4._DKIND
+!     &             + k24shield   *HI    
+!            if (iradtrans .eq. 1)
+!     &          scoef = scoef + kphHI       *HI    
+!            acoef  = k2   *de        
+!          dspdot(3) = dspdot(3) + (scoef - acoef * HII)
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!!        3) Electron density
+!
+!            scoef = 0._DKIND
+!     &                 + k57   *HI    *HI    
+!     &                 + k58   *HI    *HeI       /4._DKIND
+!     &                 + k24shield   *HI       
+!     &                 + k25shield   *HeII       /4._DKIND
+!     &                 + k26shield   *HeI       /4._DKIND
+!
+!            if ( (iradtrans .eq. 1) .and. ( irt_honly .eq. 0) )
+!     &          scoef = scoef + kphHI        * HI       
+!     &                + kphHeI         * HeI         / 4._DKIND
+!     &                + kphHeII        * HeII        / 4._DKIND
+!            if ( (iradtrans .eq. 1) .and. ( irt_honly .eq. 1) )
+!     &          scoef = scoef + kphHI        * HI       
+!
+!
+!
+!            acoef = -(k1   *HI             - k2   *HII       
+!     &              + k3   *HeI       /4._DKIND -
+!     &           k6   *HeIII       /4._DKIND
+!     &              + k5   *HeII       /4._DKIND -
+!     &           k4   *HeII       /4._DKIND)
+!          dspdot(1) = dspdot(1) + (scoef - acoef * de)
+!
+!
+!
+!
+!
+!      endif ! if (ispecies .eq. 1) then
 
 !  --- (B) Do helium chemistry in any case: (for all ispecies values) ---
 

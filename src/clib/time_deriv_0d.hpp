@@ -1016,7 +1016,7 @@ void lookup_cool_rates0d(
   // Heating/cooling rate (per unit volume -> gas mass)
 
   dspdot[i_eng-1] = *(pack.other_scratch_buf.edot) / *(pack.fields.density);
-/*
+
   // A) the 6-species integrator
   if (my_chemistry->primordial_chemistry == 1)  {
 
@@ -1101,6 +1101,8 @@ void lookup_cool_rates0d(
 
 
   }
+
+  /*
 
   // --- (B) Do helium chemistry in any case: (for all ispecies values) ---
 
