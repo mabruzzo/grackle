@@ -365,6 +365,21 @@ jobs:
             cmake --build build_ci-linux-nowarn
 
 
+  installtest:
+
+    executor:
+      name: python
+      tag: 3.7.17
+      resource_class: small  # <- 1 core
+
+    working_directory: ~/grackle
+
+    steps:
+      - checkout
+      - run: git submodule update --init --remote
+      - run: sudo apt-get install -y docker
+      - run: tests/install-tests/installtest.py
+
   docs-build:
     parameters:
       tag:
@@ -381,6 +396,7 @@ jobs:
       - checkout
       - install-docs-dependencies
       - build-docs
+
 
 workflows:
    version: 2
@@ -399,6 +415,9 @@ workflows:
 
        - corelib-tests:
            name: "Core library test suite"
+
+       - installtest:
+           name: "Test linking against various configurations of core library"
 
        - docs-build:
            name: "Docs build"
@@ -425,6 +444,9 @@ workflows:
 
        - corelib-tests:
            name: "Core library test suite"
+
+       - installtest:
+           name: "Test linking against various configurations of core library"
 
        - docs-build:
            name: "Docs build"
