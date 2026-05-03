@@ -240,6 +240,11 @@ void cool1d_multi_g(
   // multiplicative factor for including/excluding H2 cooling
   ih2cox = (double)(my_chemistry->ih2co);
 
+  // zero-out the continuum absorption coefficients
+  for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
+    alpha_continuum[i] = 0.0;
+  }
+
   // Calculate H number density
   // TODO: get rid of this buffer
   // -> the difference between accessing cool1dmulti_buf.mynh and recomputing
@@ -845,13 +850,6 @@ void cool1d_multi_g(
                                interp_grid.props.data_size, interp_grid.data);
 
         alpha_continuum[i] = std::pow(1.e1, log_a);
-      }
-    }
-
-  } else {
-    for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
-      if (itmask[i] != MASK_FALSE) {
-        alpha_continuum[i] = 0.f;
       }
     }
   }
