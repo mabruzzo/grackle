@@ -77,7 +77,7 @@ struct SpLUT {
   // XMacros provided in grackle_field_data_fdatamembers.def (or we may need to
   // slightly revise the system?)
   enum {
-#define ENTRY(NAME) NAME,
+#define ENTRY(NAME, DUMMY_ARG) NAME,
 #include "field_data_evolved_species.def"
 #undef ENTRY
 

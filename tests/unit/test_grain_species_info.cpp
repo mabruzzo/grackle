@@ -59,7 +59,7 @@ std::vector<SpNameIndexPair> selected_sp_info_(UnaryPred p) {
   int count = 0;
 
 #define STRINGIFY_(NAME) #NAME
-#define ENTRY(NAME)                                                            \
+#define ENTRY(NAME, DUMMY)                                                     \
   if (p(STRINGIFY_(NAME))) {                                                   \
     out.push_back(SpNameIndexPair{STRINGIFY_(NAME), count});                   \
   }                                                                            \
