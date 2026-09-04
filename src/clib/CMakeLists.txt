@@ -200,9 +200,6 @@ add_library(Grackle_Grackle
   ../include/grackle.def
   ../include/grackle_fortran_interface.def
   ../include/grackle_fortran_types.def
-
-  # Fortran private headers
-  phys_const.def
 )
 
 target_compile_features(Grackle_Grackle PRIVATE cxx_std_20)
