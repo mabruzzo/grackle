@@ -272,8 +272,10 @@ include(TargetInfoProps)
 get_info_properties_export_str(Grackle_Grackle
   PKG_CONFIG _GRACKLE_PC_INFO_PROPERTIES)
 
+set(INSTALL_EXTRAS_DIR "${CMAKE_CURRENT_BINARY_DIR}/grackle-install-extras")
+set(INSTALL_METADATA_DIR "${INSTALL_EXTRAS_DIR}/metadata")
+set(INSTALL_SCRIPTS_DIR "${INSTALL_EXTRAS_DIR}/scripts")
 
-set(INSTALL_METADATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/install-metadata") 
 
 foreach(suffix IN ITEMS "conventional.pc" "static.pc")
   set(_extra_arg "")
@@ -291,39 +293,53 @@ endforeach()
 
 if (BUILD_SHARED_LIBS)
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/install-metadata/grackle-conventional.pc
+    ${INSTALL_METADATA_DIR}/grackle-conventional.pc
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
     RENAME grackle.pc)
 else()
-  # if shared library was previously installed, install grackle-conventional.pc
-  # as grackle.pc. Otherwise, install grackle-static.pc as grackle.pc
-  install(CODE "
-    set(_prefix \"\${CMAKE_INSTALL_PREFIX}\")
-    if(DEFINED ENV{DESTDIR})
-      message(WARNING
-        \"linking to libgrackle.so (during install) is untested with DESTDIR\")
-      set(_prefix \"\$ENV{DESTDIR}\")
-    elseif(NOT IS_ABSOLUTE \${CMAKE_INSTALL_PREFIX})
-      # install probably triggered by `cmake --install <p1> --prefix <p2>`
-      # and <p2> is not an absolute path...
-      get_filename_component(_prefix \${CMAKE_INSTALL_PREFIX} ABSOLUTE)
-    endif()
+  # construct a code snippet that is invoked during installation
+  # -> if shared library was previously installed, install
+  #    grackle-conventional.pc as grackle.pc
+  # -> Otherwise, install grackle-static.pc as grackle.pc
+  set(_INSTALL_PC_TEMPLATE [==[
+set(_INSTALL_METADATA_DIR "@INSTALL_METADATA_DIR@")
+set(_CMAKE_INSTALL_LIBDIR "@CMAKE_INSTALL_LIBDIR@")
 
-    set(_COMMON \"\${_prefix}/${CMAKE_INSTALL_LIBDIR}\")
-    set(_PCDIR \"\${_COMMON}/pkgconfig\")
-    set(_DEST \"\${_PCDIR}/grackle.pc\")
-    if ((EXISTS \"\${_COMMON}/libgrackle.so\") OR
-        (EXISTS \"\${_COMMON}/libgrackle.dylib\"))
-      set(_SRC \"${INSTALL_METADATA_DIR}/grackle-conventional.pc\")
-      file(REMOVE \${_DEST})
-    else()
-      set(_SRC \"${INSTALL_METADATA_DIR}/grackle-static.pc\")
-    endif()
+set(_prefix "${CMAKE_INSTALL_PREFIX}")
+if(DEFINED ENV{DESTDIR})
+  message(WARNING
+    "linking to libgrackle.so (during install) is untested with DESTDIR")
+  set(_prefix "$ENV{DESTDIR}")
+elseif(NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+  # install probably triggered by `cmake --install <p1> --prefix <p2>`
+  # and <p2> is not an absolute path...
+  get_filename_component(_prefix ${CMAKE_INSTALL_PREFIX} ABSOLUTE)
+endif()
 
-    message(STATUS \"Copying \${_SRC} to \${_DEST}\")
+set(_COMMON "${_prefix}/${_CMAKE_INSTALL_LIBDIR}")
+set(_PCDIR "${_COMMON}/pkgconfig")
+set(_DEST "${_PCDIR}/grackle.pc")
+if ((EXISTS "${_COMMON}/libgrackle.so") OR
+    (EXISTS "${_COMMON}/libgrackle.dylib"))
+  set(_SRC "${_INSTALL_METADATA_DIR}/grackle-conventional.pc")
+  file(REMOVE ${_DEST})
+else()
+  set(_SRC "${_INSTALL_METADATA_DIR}/grackle-static.pc")
+endif()
 
-    execute_process(COMMAND ${CMAKE_COMMAND} -E copy \${_SRC} \${_DEST})"
+message(STATUS "Copying ${_SRC} to ${_DEST}")
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${_SRC} ${_DEST})
+]==])
+
+  set(_INSTALL_PC_SCRIPT "${INSTALL_SCRIPTS_DIR}/install-grackle-pc.cmake")
+
+  file(CONFIGURE
+    OUTPUT ${_INSTALL_PC_SCRIPT}
+    CONTENT ${_INSTALL_PC_TEMPLATE}
+    @ONLY
   )
+  install(SCRIPT "${_INSTALL_PC_SCRIPT}")
 endif()
 
 # Define the cmake Package Config File
@@ -350,7 +366,7 @@ include(CMakePackageConfigHelpers)
 # installations on your machine. If someone is doing that, we can assume they
 # have some level of expertise. So let's just go with SameMajorVersion
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/install-metadata/GrackleConfigVersion.cmake"
+  "${INSTALL_METADATA_DIR}/GrackleConfigVersion.cmake"
   VERSION "${Grackle_VERSION}" # <- variable was set by project(Grackle ...)
   COMPATIBILITY SameMajorVersion
 )
@@ -364,13 +380,13 @@ get_info_properties_export_str(Grackle_Grackle
     CMAKE_CONFIG _GRACKLE_INFO_PROPERTIES)
 configure_file(
   ${PROJECT_SOURCE_DIR}/cmake/GrackleConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/install-metadata/GrackleConfig.cmake
+  ${INSTALL_METADATA_DIR}/GrackleConfig.cmake
   @ONLY
 )
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/install-metadata/GrackleConfig.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/install-metadata/GrackleConfigVersion.cmake
+  ${INSTALL_METADATA_DIR}/GrackleConfig.cmake
+  ${INSTALL_METADATA_DIR}/GrackleConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Grackle
 )
 
@@ -397,8 +413,8 @@ install(EXPORT GrackleTargets
 set(BUILDTREE_CMAKE_DIR ${GRACKLE_BUILD_EXPORT_PREFIX_PATH}/cmake/Grackle)
 
 file(COPY
-  ${CMAKE_CURRENT_BINARY_DIR}/install-metadata/GrackleConfig.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/install-metadata/GrackleConfigVersion.cmake
+  ${INSTALL_METADATA_DIR}/GrackleConfig.cmake
+  ${INSTALL_METADATA_DIR}/GrackleConfigVersion.cmake
   DESTINATION ${BUILDTREE_CMAKE_DIR}
 )
 
