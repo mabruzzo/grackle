@@ -58,32 +58,45 @@ endif()
 
 # the remaining tests are more rigorous:
 #
-# first, we check the results of c_example against the historical results
+# first, we check the results of cxx_example against the historical results
 # (which we previously recorded to a JSON file)
 # -> we may need to loosen up rtol so that this works across machines
 # -> if we ever need to regenerate the reference JSON file, we can run
 #    `code_example_checker.py genjson --target <path> --output <path>`
 add_test(
-  NAME GrExampleHistoricalCMP.c
+  NAME GrExampleHistoricalCMP.cxx
   COMMAND ${checker_script} cmp
-    --target $<TARGET_FILE:c_example>
-    --ref ${script_dir}/c_example_ref.json
+    --target $<TARGET_FILE:cxx_example>
+    --ref ${script_dir}/cxx_example_ref.json
     --rtol 3e-12
     --exec-timeout 10
     --exec-dir ${example_exec_dir}
 )
-set_tests_properties(GrExampleHistoricalCMP.c PROPERTIES
+set_tests_properties(GrExampleHistoricalCMP.cxx PROPERTIES
   FIXTURES_REQUIRED GREXAMPLE_PREREQS
 )
 
 # the remaining tests compare the results printed by various code examples
 # against each other. In general, there should be no differences in the
 # results
+
+add_test(
+  NAME GrExampleCMP.c
+  COMMAND ${checker_script} cmp
+    --target $<TARGET_FILE:c_example>
+    --ref $<TARGET_FILE:cxx_example>
+    --exec-timeout 10
+    --exec-dir ${example_exec_dir}
+)
+set_tests_properties(GrExampleCMP.c PROPERTIES
+  FIXTURES_REQUIRED GREXAMPLE_PREREQS
+)
+
 add_test(
   NAME GrExampleCMP.c_local
   COMMAND ${checker_script} cmp
     --target $<TARGET_FILE:c_local_example>
-    --ref $<TARGET_FILE:c_example>
+    --ref $<TARGET_FILE:cxx_example>
     --exec-timeout 10
     --exec-dir ${example_exec_dir}
 )
@@ -91,17 +104,6 @@ set_tests_properties(GrExampleCMP.c_local PROPERTIES
   FIXTURES_REQUIRED GREXAMPLE_PREREQS
 )
 
-add_test(
-  NAME GrExampleCMP.cxx
-  COMMAND ${checker_script} cmp
-    --target $<TARGET_FILE:cxx_example>
-    --ref $<TARGET_FILE:c_example>
-    --exec-timeout 10
-    --exec-dir ${example_exec_dir}
-)
-set_tests_properties(GrExampleCMP.cxx PROPERTIES
-  FIXTURES_REQUIRED GREXAMPLE_PREREQS
-)
 
 if (TARGET fortran_example)
   # we allow for the Fortran to deviate from c_example to a small degree
@@ -111,7 +113,7 @@ if (TARGET fortran_example)
     NAME GrExampleCMP.fortran
     COMMAND ${checker_script} cmp
       --target $<TARGET_FILE:fortran_example>
-      --ref $<TARGET_FILE:c_example>
+      --ref $<TARGET_FILE:cxx_example>
       --rtol 6e-7
       --exec-timeout 10
       --exec-dir ${example_exec_dir}
