@@ -142,32 +142,44 @@ install(TARGETS Grackle_Grackle
 )
 
 if (BUILD_SHARED_LIBS)
-  # (As noted above) Because we renamed the shared library so its called
-  # `libgrackle-{VERSION_NUM}.so` (rather than `libgrackle.so`), we need an
-  # install-rule to make a symlink called libgrackle.so to support compilation
-  # with `-lgrackle`. (This is consistent with the classic build-system)
-  install(CODE "
-    set(_prefix \"\${CMAKE_INSTALL_PREFIX}\")
-    if(DEFINED ENV{DESTDIR})
-      message(WARNING
-        \"linking to libgrackle.so (during install) is untested with DESTDIR\")
-      set(_prefix \"\$ENV{DESTDIR}\")
-    elseif(NOT IS_ABSOLUTE \${CMAKE_INSTALL_PREFIX})
-      # install probably triggered by `cmake --install <p1> --prefix <p2>`
-      # and <p2> is not an absolute path...
-      get_filename_component(_prefix \${CMAKE_INSTALL_PREFIX} ABSOLUTE)
-    endif()
+  # construct a code snippet that is invoked during installation
+  # -> (As noted above) Because we renamed the shared library so its called
+  #    `libgrackle-{VERSION_NUM}.so` (rather than `libgrackle.so`), we need an
+  #    install-rule to make a symlink called libgrackle.so to support
+  #    compilation with `-lgrackle`.
+  # -> we can stop doing this if we drop the the classic build-system and if we
+  #    commit to ABI stability (the latter requirement may not be necessary)
+  # -> we can't use file(GENERATE ...) with install(SCRIPT ...) because this
+  #    logic uses some generator expressions
+  string(JOIN "\n" _SHARED_LIB_SYMLINK_CODE_SNIPPET
+    # record definition known to the interpretter while assembling snippet
+    "set(_CMAKE_INSTALL_LIBDIR \"${CMAKE_INSTALL_LIBDIR}\")"
 
-    set(_COMMON \"\${_prefix}/${CMAKE_INSTALL_LIBDIR}\")
-    set(_LIB \"\${_COMMON}/$<TARGET_FILE_NAME:Grackle_Grackle>\")
-    set(_LINK \"\${_COMMON}/libgrackle$<TARGET_FILE_SUFFIX:Grackle_Grackle>\")
+    # remaining lines encode the actual logic (the bracket syntax lets us avoid
+    # escaping quotes & escaping eager variable substitution)
+    [==[
+set(_prefix "${CMAKE_INSTALL_PREFIX}")
+if(DEFINED ENV{DESTDIR})
+  message(WARNING
+    "linking to libgrackle.so (during install) is untested with DESTDIR")
+  set(_prefix "$ENV{DESTDIR}")
+elseif(NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+  # install probably triggered by `cmake --install <p1> --prefix <p2>`
+  # and <p2> is not an absolute path...
+  get_filename_component(_prefix ${CMAKE_INSTALL_PREFIX} ABSOLUTE)
+endif()
 
-    message(STATUS \"Creating symlink to \${_LIB} called \${_LINK}\")
+set(_COMMON "${_prefix}/${_CMAKE_INSTALL_LIBDIR}")
+set(_LIB "${_COMMON}/$<TARGET_FILE_NAME:Grackle_Grackle>")
+set(_LINK "${_COMMON}/libgrackle$<TARGET_FILE_SUFFIX:Grackle_Grackle>")
 
-    execute_process(COMMAND
-      ${CMAKE_COMMAND} -E create_symlink \${_LIB} \${_LINK}
-    )"
+message(STATUS "Creating symlink to ${_LIB} called ${_LINK}")
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${_LIB} ${_LINK})
+    ]==]
   )
+
+  install(CODE "${_SHARED_LIB_SYMLINK_CODE_SNIPPET}")
 endif()
 
 # precompute metadata-file information (to help with linking)
