@@ -57,6 +57,20 @@ convenience_prepare_clang_tidy()
 # Project-Wide Configuration
 # --------------------------
 
+option(GRACKLE_USE_DOUBLE "compile the code with double precision" ON)
+option(GRACKLE_DEFINE_INSTALL_RULES
+  "enable Grackle's installation rules" ${GRACKLE_IS_TOP_LEVEL})
+option(GRACKLE_BUILD_TESTS "build Grackle tests driven by CTest" OFF)
+
+if (GRACKLE_BUILD_TESTS)
+  set(_GRACKLE_EXAMPLES_DEFAULT ON)
+else()
+  set(_GRACKLE_EXAMPLES_DEFAULT ${GRACKLE_IS_TOP_LEVEL})
+endif()
+option(GRACKLE_EXAMPLES
+  "compile grackle examples" ${_GRACKLE_EXAMPLES_DEFAULT})
+
+
 # perform some basic checks
 if (NOT GRACKLE_IS_TOP_LEVEL)
   if ( NOT ("CXX" IN_LIST PRE_ENABLED_LANGUAGES) )
@@ -90,19 +104,6 @@ elseif (GRACKLE_IS_TOP_LEVEL)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
   endif()
 endif()
-
-option(GRACKLE_USE_DOUBLE "compile the code with double precision" ON)
-option(GRACKLE_DEFINE_INSTALL_RULES
-  "enable Grackle's installation rules" ${GRACKLE_IS_TOP_LEVEL})
-option(GRACKLE_BUILD_TESTS "build Grackle tests driven by CTest" OFF)
-
-if (GRACKLE_BUILD_TESTS)
-  set(_GRACKLE_EXAMPLES_DEFAULT ON)
-else()
-  set(_GRACKLE_EXAMPLES_DEFAULT ${GRACKLE_IS_TOP_LEVEL})
-endif()
-option(GRACKLE_EXAMPLES
-  "compile grackle examples" ${_GRACKLE_EXAMPLES_DEFAULT})
 
 if (GRACKLE_EXAMPLES)
   include(CheckLanguage)
