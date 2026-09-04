@@ -19,7 +19,7 @@
 #
 # For the sake of the conversation, let's imagine that the we are using `ld`
 # for linking together object files and the minimal set of "linker flags" for
-# Grackle's dependencies are: `-lhdf5 -lm -lgfortran`
+# Grackle's dependencies are: `-lhdf5 -lc++` or `-lhdf5 -lstdc++`
 #
 # We can now consider the 3 main scenarios:
 #
@@ -27,7 +27,7 @@
 #    dependencies (or there are no potential version incompatabilites) AND they
 #    are all installed in the standard-system-locations.
 #
-#    - In this case, we can use `-lhdf5 -lm -lgfortran` as flags. `ld` will be
+#    - In this case, we can use `-lhdf5 -lstdc++` as flags. `ld` will be
 #      able to find each library at compile time, and the operating system's
 #      "dynamic linker" will be able to locate each dependency at runtime
 #
@@ -191,20 +191,17 @@ endif()
 
 if (GRACKLE_USE_OPENMP)
   set(_GRACKLE_OpenMP_LIBS ${OpenMP_C_LIB_NAMES})
-  list(APPEND _GRACKLE_OpenMP_LIBS ${OpenMP_Fortran_LIB_NAMES})
+  list(APPEND _GRACKLE_OpenMP_LIBS ${OpenMP_CXX_LIB_NAMES})
   list(REMOVE_DUPLICATES _GRACKLE_OpenMP_LIBS)
 else()
   set(_GRACKLE_OpenMP_LIBS "")
 endif()
 
-get_implicit_link_reqs(Fortran Fortran_implicit_libs Fortran_implicit_linkdirs)
-set(_TOOLCHAIN_LINK_LIBS "${Fortran_implicit_libs}")
 get_implicit_link_reqs(CXX CXX_implicit_libs CXX_implicit_linkdirs)
 list(APPEND _TOOLCHAIN_LINK_LIBS ${CXX_implicit_libs})
 
 
-# we previously did this, but I don't think this is a great idea until after we stop
-# worying about implicit fortran link dependencies
+# we previously did this, but I'm not sure this is a good idea
 #list(REMOVE_DUPLICATES _TOOLCHAIN_LINK_LIBS)
 
 
@@ -233,7 +230,7 @@ string(REPLACE
   ";" " " _STATIC_EXTRA_LINK_LIBS "${_STATIC_EXTRA_LINK_LIBS}")
 
 # at the moment, the only extra library search paths that we are specifying is
-# for finding implicit Fortran dependencies
+# for finding implicit C++ dependencies
 # -> this probably isn't adequate on systems where hdf5.pc can't be found
 # -> it may not be adequate on some systems when using OpenMP
 #
@@ -244,9 +241,9 @@ string(REPLACE
 #    -> we effectively assume that libraries are found at run-time in normal
 #       system installation paths. Thus, if a downstream is linked against a
 #       static grackle library it will hopefully keep working even if we
-#       replace our system's Fortran compiler
-#    -> it kinda makes sense to use libraries shipped with the Fortran compiler
-#       for linking. If there are multiple versions of the Fortran runtime, this
+#       replace our system's C++ compiler
+#    -> it kinda makes sense to use libraries shipped with the C++ compiler
+#       for linking. If there are multiple versions of the C++ runtime, this
 #       ensures that the downstream application knows to use the runtime that
 #       is compatible with the original compiler (not sure if this is really
 #       an issue in-practice...). At the same time, our pkg-config file will
@@ -257,17 +254,13 @@ string(REPLACE
 # -> We also aren't very consistent. It turns out on macOS, the linker uses the
 #    link-time locations at runtime as well. This is equivalent to us also
 #    specifying -rpath with absolute-paths on most systems.
-#    -> it turns out that this works to our advantage right now because
-#       libgfortran isn't at a system install-path... it is only attached to
-#       the version of libgfortran shipped with the compiler
-#    -> this does mean that an installation could break if you remove/replace
-#       your fortran compiler. We could potentially reduce the chance of
-#       breakage during gfortran upgrades by replacing the -L path to make use
-#       of the symlink at /opt/homebrew/lib/gcc/...
+#    -> this may work to our advantage if someone tries to compile against a
+#       a C++ runtime library other than the one at a system install-path
+#       (presumably it would be attached to a runtime library shipped with a
+#       compiler)
 
 
-set(_STATIC_EXTRA_LINK_DIRS ${Fortran_implicit_linkdirs})
-list(APPEND _STATIC_EXTRA_LINK_DIRS ${CXX_implicit_linkdirs})
+set(_STATIC_EXTRA_LINK_DIRS ${CXX_implicit_linkdirs})
 list(TRANSFORM _STATIC_EXTRA_LINK_DIRS PREPEND "-L")
 string(REPLACE
   ";" " " _STATIC_EXTRA_LINK_DIRS "${_STATIC_EXTRA_LINK_DIRS}")

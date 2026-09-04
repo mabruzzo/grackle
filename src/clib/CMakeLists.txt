@@ -61,8 +61,7 @@ query_version(git-revision GIT_REVISION)
 # in the original build-system, the following string also included things like:
 # include-args, linking flags, macro definitions, all other compiler flags...
 string(REPLACE "\n" "\\n" SHOW_FLAGS_STR "
-  CC = ${CMAKE_C_COMPILER}
-  FC = ${CMAKE_Fortran_COMPILER}
+  CXX = ${CMAKE_CXX_COMPILER}
   LD = ${CMAKE_LINKER}
 ")
 
@@ -195,7 +194,7 @@ add_library(Grackle_Grackle
   grackle_macros.h
   collisional_rxn_rate_members.def # <-- acts as a C header
 
-  # Fortran public headers
+  # Fortran public interface headers
   ../include/grackle.def
   ../include/grackle_fortran_interface.def
   ../include/grackle_fortran_types.def
@@ -275,9 +274,7 @@ target_include_directories(Grackle_Grackle
 )
 
 target_link_libraries(Grackle_Grackle
-  PRIVATE GRACKLE_HDF5_C
-          $<$<BOOL:${GRACKLE_USE_OPENMP}>:OpenMP::OpenMP_Fortran>
-          $<$<BOOL:${GRACKLE_USE_OPENMP}>:OpenMP::OpenMP_C>
+  PRIVATE GRACKLE_HDF5_C $<$<BOOL:${GRACKLE_USE_OPENMP}>:OpenMP::OpenMP_CXX>
 )
 
 # explicitly link against the math functions of the C standard library

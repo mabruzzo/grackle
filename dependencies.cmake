@@ -92,19 +92,5 @@ elseif(HDF5_VERSION VERSION_GREATER "1.6")
 endif()
 
 if (GRACKLE_USE_OPENMP)
-  if (CMAKE_GENERATOR STREQUAL "Ninja")
-    message(WARNING
-      "using Ninja with GRACKLE_USE_OPENMP=ON may cause compilation problems."
-      "The issues manifest as error with finding the \"omp_lib.h\" header "
-      "that is conditionally included by some Fortran source files when using "
-      "CMake. The quick fix is use Makefiles. See the docs for more info"
-    )
-  endif()
-
-  if(GRACKLE_EXAMPLES)
-    set(_GRACKLE_OMP_COMPONENTS C Fortran CXX)
-  else()
-    set(_GRACKLE_OMP_COMPONENTS C Fortran)
-  endif()
-  find_package(OpenMP REQUIRED COMPONENTS ${_GRACKLE_OMP_COMPONENTS})
+  find_package(OpenMP REQUIRED COMPONENTS CXX)
 endif()
