@@ -293,12 +293,6 @@ target_compile_options(Grackle_Grackle PRIVATE
   "$<$<CONFIG:RELEASE>:${GRACKLE_OPTIMIZATION_FLIST}>"
   "$<$<CONFIG:RELWITHDEBINFO>:${GRACKLE_OPTIMIZATION_FLIST}>")
 
-# define macros so that the C files know how to properly handle name-mangling
-# (if cmake were our only build-system, we could use FortranCInterface module)
-if ("${CMAKE_SYSTEM_NAME}" MATCHES "^(Linux)|(Darwin)$")
-  target_compile_definitions(Grackle_Grackle PRIVATE "LINUX")
-endif()
-
 # define macro to slightly customize behavior in header files since we're compiling
 # the grackle library
 # - suppresses warnings about C files using our deprecated public headers (the files
