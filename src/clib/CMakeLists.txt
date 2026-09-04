@@ -300,13 +300,6 @@ if (UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   target_link_libraries(Grackle_Grackle PRIVATE m)
 endif()
 
-
-# add the necessary compiler-specific Fortran flags to ensure proper handling
-# of our specific Fortran-dialect and that name mangling is performed as
-# expected (these flags only get applied to Fortran source-code files)
-include(AddConditionalFortranFlags)
-add_conditional_fortran_flags(Grackle_Grackle)
-
 # add the machine-specific compiler optimization options (generally specified
 # in host-files) for use in the  RELEASE or RELWITHDEBINFO build-configurations
 # -> as noted elsewhere, we may stop using these when Grackle isn't the
