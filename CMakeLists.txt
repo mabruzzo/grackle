@@ -70,28 +70,8 @@ endif()
 option(GRACKLE_EXAMPLES
   "compile grackle examples" ${_GRACKLE_EXAMPLES_DEFAULT})
 
-
 # perform some basic checks
-if (NOT GRACKLE_IS_TOP_LEVEL)
-  if ( NOT ("CXX" IN_LIST PRE_ENABLED_LANGUAGES) )
-    # technically, this is only an issue when building Grackle as a static
-    # library, but we raise an error anyways for a consistent experience
-    #
-    # based on the answers to the following post, we will reassess the approach
-    # we take in this scenario
-    #   https://discourse.cmake.org/t/conventions-for-linking-implicit-dependencies-of-an-embedded-multi-language-static-library/11073
-    message(FATAL_ERROR
-      "The top-level project in which the Grackle-build is embedded doesn't"
-      "list CXX as an enabled language. This will cause linking issues"
-      "when Grackle is built as a static library (like the current build)."
-      ""
-      "To fix this, either add CXX to the language list specified in"
-      "the top-level project command OR call enable_language(CXX)"
-      "before embedding Grackle (see the latest CMake docs for restrictions"
-      "about where enable_language may be called")
-  endif()
-
-elseif (GRACKLE_IS_TOP_LEVEL)
+if (GRACKLE_IS_TOP_LEVEL)
   # the following 2 checks are only enforced when Grackle is built standalone
   # (we let people do whatever when it's embedded for maximum flexibility)
 
@@ -103,6 +83,21 @@ elseif (GRACKLE_IS_TOP_LEVEL)
     message(STATUS "no build type detected, defaulting to Release build-type")
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
   endif()
+endif()
+
+# perform some checks related to enabled languages
+if ((NOT GRACKLE_IS_TOP_LEVEL) AND NOT ("CXX" IN_LIST PRE_ENABLED_LANGUAGES))
+  # technically, this is only an issue when building Grackle as a static
+  # library, but we raise an error anyways for a consistent experience
+  message(FATAL_ERROR
+    "The top-level project in which the Grackle-build is embedded doesn't"
+    "list CXX as an enabled language. This will cause linking issues"
+    "when Grackle is built as a static library (like the current build)."
+    ""
+    "To fix this, either add CXX to the language list specified in"
+    "the top-level project command OR call enable_language(CXX)"
+    "before embedding Grackle (see the latest CMake docs for restrictions"
+    "about where enable_language may be called")
 endif()
 
 if (GRACKLE_EXAMPLES)
