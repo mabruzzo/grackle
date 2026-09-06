@@ -30,21 +30,21 @@ namespace { // stuff inside of an anonymous namespace is read-only
 /// Initializes an empty #cloudy_data struct with zeros and nullptrs.
 void initialize_empty_cloudy_data_struct(cloudy_data *my_cloudy)
 {
-  my_cloudy->grid_rank = 0LL;
-  for (long long i = 0; i < GRACKLE_CLOUDY_TABLE_MAX_DIMENSION; i++){
-    my_cloudy->grid_dimension[i] = 0LL;
+  my_cloudy->grid_rank = 0;
+  for (int64_t i = 0; i < GRACKLE_CLOUDY_TABLE_MAX_DIMENSION; i++){
+    my_cloudy->grid_dimension[i] = 0;
     my_cloudy->grid_parameters[i] = nullptr;
   }
   my_cloudy->heating_data = nullptr;
   my_cloudy->cooling_data = nullptr;
   my_cloudy->mmw_data = nullptr;
-  my_cloudy->data_size = 0LL;
+  my_cloudy->data_size = 0;
 }
 
 double* load_heatcool_data(hid_t file_id, const char* dset_name,
                            double CoolUnit,
                            grackle::impl::h5io::ArrayShape expected_shape) {
-  long long data_size =
+  int64_t data_size =
     grackle::impl::h5io::ArrayShape_elem_count(expected_shape);
   double* tmp_data = new double[data_size];
 
@@ -58,7 +58,7 @@ double* load_heatcool_data(hid_t file_id, const char* dset_name,
   }
 
   double* out = new double[data_size];
-  for (long long q = 0LL; q < data_size; q++) {
+  for (int64_t q = 0; q < data_size; q++) {
     out[q] = tmp_data[q] > 0 ?
       (double) std::log10(tmp_data[q]) : (double) SMALL_LOG_VALUE;
 
@@ -128,10 +128,10 @@ int GRIMPL_NS::initialize_cloudy_data(
   // use grid_props to initialize parts of my_cloudy
   // TODO: it would be really nice if we explicitly validated that each
   //       grid_props.axes[i] held the expected values
-  my_cloudy->grid_rank = static_cast<long long>(grid_props.table_shape.ndim);
-  for (long long i = 0LL; i < my_cloudy->grid_rank; i++) {
+  my_cloudy->grid_rank = static_cast<int64_t>(grid_props.table_shape.ndim);
+  for (int64_t i = 0; i < my_cloudy->grid_rank; i++) {
     my_cloudy->grid_dimension[i]
-      = static_cast<long long>(grid_props.table_shape.shape[i]);
+      = static_cast<int64_t>(grid_props.table_shape.shape[i]);
     
     if (my_cloudy->grid_dimension[i] <= 0) {
       // the caller is responsible for calling free_cloudy_data
@@ -145,7 +145,7 @@ int GRIMPL_NS::initialize_cloudy_data(
       std::strcmp("Temperature", grid_props.axes[i].name) == 0;
 
     double* buf = new double[my_cloudy->grid_dimension[i]];
-    for (long long w = 0LL; w < my_cloudy->grid_dimension[i]; w++) {
+    for (int64_t w = 0; w < my_cloudy->grid_dimension[i]; w++) {
       if (is_temperature) {
         buf[w] = std::log10(grid_props.axes[i].values[w]);
       } else {
@@ -158,7 +158,7 @@ int GRIMPL_NS::initialize_cloudy_data(
   if (grackle_verbose) {
     std::fprintf(stdout, "Cloudy cooling grid = {\n");
     std::fprintf(stdout, "  rank: %lld,\n", my_cloudy->grid_rank);
-    for (long long i = 0LL; i < my_cloudy->grid_rank; i++) {
+    for (int64_t i = 0; i < my_cloudy->grid_rank; i++) {
       std::fprintf(stdout,
           "  axis %lld (\"%s\"): %g to %g (%lld steps),\n",
           i,

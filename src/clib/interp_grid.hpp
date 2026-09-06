@@ -13,6 +13,7 @@
 #ifndef INTERP_TABLE_UTILS_HPP
 #define INTERP_TABLE_UTILS_HPP
 
+#include <cstdint>  // int64_t
 #include <utility>  // std::swap, std::move, std::exchange
 
 #include "grackle.h"  // GRACKLE_CLOUDY_TABLE_MAX_DIMENSION
@@ -59,8 +60,6 @@ struct InterpDimScale {
 ///
 /// Ideas For Future Improvement
 /// ----------------------------
-/// - replace all occurrences of ``long long`` with int64_t (this will be a
-///   little invasive and affect some other parts of the code base)
 /// - stop allowing direct access to data members (have accessor methods
 ///   mediate access)
 /// - we could probably get rid of the data_size member and provide an accessor
@@ -74,10 +73,10 @@ struct InterpDimScale {
 ///   to a factory method that returns std::optional or std::expected.
 struct InterpGridProps {
   /// Rank of dataset
-  long long rank;
+  int64_t rank;
 
   /// Dimension of dataset.
-  long long dimension[GRACKLE_CLOUDY_TABLE_MAX_DIMENSION];
+  int64_t dimension[GRACKLE_CLOUDY_TABLE_MAX_DIMENSION];
 
   /// Dataset parameter values (in the common case where there there is
   /// constant spacing, we could probably track less data).
@@ -87,7 +86,7 @@ struct InterpGridProps {
   double parameter_spacing[GRACKLE_CLOUDY_TABLE_MAX_DIMENSION];
 
   /// Length of 1D flattened data grid
-  long long data_size;
+  int64_t data_size;
 
 public:  // interface methods
   /// @brief default constructor (makes an empty instance)
@@ -118,7 +117,7 @@ public:  // interface methods
       return;
     }
 
-    long long tmp_data_size = 1ll;
+    int64_t tmp_data_size = 1;
     for (int i = 0; i < n_dim; i++) {
       const GRIMPL_NS::InterpDimScale& dim_scale = dim_scales[i];
 
@@ -143,7 +142,7 @@ public:  // interface methods
       parameters[i] = arr;
       parameter_spacing[i] = dim_scale.step;
 
-      tmp_data_size *= (long long)dim_scale.count;
+      tmp_data_size *= static_cast<int64_t>(dim_scale.count);
     }
     data_size = tmp_data_size;
     rank = n_dim;

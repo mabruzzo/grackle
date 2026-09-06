@@ -25,6 +25,8 @@
 #ifndef __CHEMISTRY_DATA_H__
 #define __CHEMISTRY_DATA_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -340,10 +342,10 @@ typedef struct
 {
 
   // Rank of dataset.
-  long long grid_rank;
+  int64_t grid_rank;
 
   // Dimension of dataset.
-  long long grid_dimension[GRACKLE_CLOUDY_TABLE_MAX_DIMENSION];
+  int64_t grid_dimension[GRACKLE_CLOUDY_TABLE_MAX_DIMENSION];
 
   // Dataset parameter values.
   double *grid_parameters[GRACKLE_CLOUDY_TABLE_MAX_DIMENSION];
@@ -358,7 +360,7 @@ typedef struct
   double *mmw_data;
 
   // Length of 1D flattened data
-  long long data_size;
+  int64_t data_size;
 
 } cloudy_data;
 
