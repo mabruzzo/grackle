@@ -99,7 +99,7 @@ TEST_F(SimpleRateQueryTest, PropertyInvalidRateID) {
   std::vector<enum grunstable_ratequery_prop_kind> prop_kinds{
       GRUNSTABLE_QPROP_NDIM, GRUNSTABLE_QPROP_SHAPE,
       GRUNSTABLE_QPROP_MAXITEMSIZE};
-  std::vector<long long> buf;
+  std::vector<int64_t> buf;
 
   for (grunstable_rateid_type invalid_id : invalid_ids) {
     for (enum grunstable_ratequery_prop_kind kind : prop_kinds) {
@@ -151,23 +151,23 @@ TEST_P(ParametrizedRateQueryTest, ConsistentIDs) {
 }
 
 TEST_P(ParametrizedRateQueryTest, Property) {
-  std::vector<long long> buf;
+  std::vector<int64_t> buf;
   for (const grtest::NameIdPair pair : grtest::RateQueryRange(pack)) {
-    constexpr long long DEFAULT_VAL = -25634634LL;  // <- arbitrary value
+    constexpr int64_t DEFAULT_VAL = -25634634;  // <- arbitrary value
 
     // check ndim
-    long long ndim = DEFAULT_VAL;
+    int64_t ndim = DEFAULT_VAL;
     EXPECT_GR_SUCCESS(grunstable_ratequery_prop(pack.my_rates(), pair.id,
                                                 GRUNSTABLE_QPROP_NDIM, &ndim))
         << "for " << pair;
-    ASSERT_GE(ndim, 0LL) << "for " << pair;
+    ASSERT_GE(ndim, 0) << "for " << pair;
 
     // check shape
-    buf.assign((ndim == 0LL) ? 1 : ndim, DEFAULT_VAL);
+    buf.assign((ndim == 0) ? 1 : ndim, DEFAULT_VAL);
     EXPECT_GR_SUCCESS(grunstable_ratequery_prop(
         pack.my_rates(), pair.id, GRUNSTABLE_QPROP_SHAPE, buf.data()))
         << "for " << pair;
-    if (ndim == 0LL) {
+    if (ndim == 0) {
       EXPECT_EQ(buf[0], DEFAULT_VAL)
           << "the buffer passed to grunstable_ratequery_prop was unexpectedly "
           << "modified while querying the shape for the rate " << pair
@@ -177,7 +177,7 @@ TEST_P(ParametrizedRateQueryTest, Property) {
           << "buf holds the shape queried for " << pair;
     }
 
-    long long tmp = DEFAULT_VAL;
+    int64_t tmp = DEFAULT_VAL;
     EXPECT_GR_SUCCESS(grunstable_ratequery_prop(pack.my_rates(), pair.id,
                                                 GRUNSTABLE_QPROP_DTYPE, &tmp))
         << "for " << pair;
@@ -199,7 +199,7 @@ TEST_P(ParametrizedRateQueryTest, Property) {
       EXPECT_GT(maxitemsize, 0) << "for " << pair;
     }
 
-    long long writable = DEFAULT_VAL;
+    int64_t writable = DEFAULT_VAL;
     EXPECT_GR_SUCCESS(grunstable_ratequery_prop(
         pack.my_rates(), pair.id, GRUNSTABLE_QPROP_WRITABLE, &writable))
         << "for " << pair;
