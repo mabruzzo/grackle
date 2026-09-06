@@ -14,9 +14,9 @@
 #ifndef INTERPOLATE_HPP
 #define INTERPOLATE_HPP
 
-#include <cmath>    // log
-#include <cstdint>  // int64_t
-#include "fortran_func_decls.h"
+#include <cmath>      // log
+#include <cstdint>    // int64_t
+#include "grackle.h"  // cloudy_data
 #include "support/config.hpp"
 
 namespace GRIMPL_NAMESPACE_DECL {

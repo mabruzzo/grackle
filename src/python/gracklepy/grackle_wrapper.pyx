@@ -20,6 +20,7 @@ from gracklepy.utilities.physical_constants import \
     mass_hydrogen_cgs
 
 from libc.limits cimport INT_MAX
+from libc.stdint cimport int64_t
 from libc.stdlib cimport malloc, free
 from .grackle_defs cimport *
 import numpy as np
@@ -995,7 +996,7 @@ def _portable_reshape(arr: np.ndarray, shape: tuple[int, ...]) -> np.ndarray:
 class RatequeryFailException(Exception):
     pass
 
-cdef long long rateq_raw_nonshape_prop(
+cdef int64_t rateq_raw_nonshape_prop(
     c_chemistry_data_storage *ptr,
     grunstable_rateid_type rate_id,
     grunstable_ratequery_prop_kind prop_kind,
@@ -1005,7 +1006,7 @@ cdef long long rateq_raw_nonshape_prop(
 
     This **ONLY** exists to simplify the implementation of rateq_get_prop
     """
-    cdef long long buf
+    cdef int64_t buf
     cdef int ret = grunstable_ratequery_prop(ptr, rate_id, prop_kind, &buf)
     if ret != GR_SUCCESS:
         raise RatequeryFailException()
@@ -1024,7 +1025,7 @@ cdef object rateq_get_prop(
     If performance becomes a concern, we should stop using
     RatequeryFailException.
     """
-    cdef long long buf[7]
+    cdef int64_t buf[7]
     cdef int ret_code
     if prop_kind == GRUNSTABLE_QPROP_SHAPE:
         ndim = rateq_get_prop(ptr, rate_id, prop_kind=GRUNSTABLE_QPROP_NDIM)
@@ -1046,8 +1047,6 @@ cdef object rateq_get_prop(
     elif (prop_kind == GRUNSTABLE_QPROP_NDIM or
           prop_kind == GRUNSTABLE_QPROP_MAXITEMSIZE):
         buf[0] = rateq_raw_nonshape_prop(ptr, rate_id, prop_kind)
-        #if sizeof(Py_ssize_t) > sizeof(long long):
-        #    if 
         return int(buf[0])
     elif prop_kind == GRUNSTABLE_QPROP_WRITABLE:
         buf[0] = rateq_raw_nonshape_prop(ptr, rate_id, prop_kind)
