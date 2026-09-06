@@ -157,15 +157,16 @@ int GRIMPL_NS::initialize_cloudy_data(
 
   if (grackle_verbose) {
     std::fprintf(stdout, "Cloudy cooling grid = {\n");
-    std::fprintf(stdout, "  rank: %lld,\n", my_cloudy->grid_rank);
+    std::fprintf(
+        stdout, "  rank: %d,\n", static_cast<int>(my_cloudy->grid_rank));
     for (int64_t i = 0; i < my_cloudy->grid_rank; i++) {
       std::fprintf(stdout,
           "  axis %lld (\"%s\"): %g to %g (%lld steps),\n",
-          i,
+          static_cast<long long>(i),
           grid_props.axes[i].name,
           my_cloudy->grid_parameters[i][0],
           my_cloudy->grid_parameters[i][my_cloudy->grid_dimension[i]-1],
-          my_cloudy->grid_dimension[i]);
+          static_cast<long long>(my_cloudy->grid_dimension[i]));
     }
     fprintf(stdout, "}\n");
   }
