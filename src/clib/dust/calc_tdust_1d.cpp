@@ -227,10 +227,9 @@ static EqnSolveRslt finite_diff_newton(const Fn& fn, double* x,
         // note: next line is erroneous if fplus_val - f_vals is exactly 0
         x[i] = std::fmin(x[i] - (f_vals[i] / slope), max_x);
 
-        // why are we trying to reduce the size of pert? Is this an attempt to
-        // avoid nonconvergent cycles?
-        pert[i] = std::fmax(
-            std::fmin(pert[i], 0.5 * std::fabs(x[i] - x_old) / x[i]), minpert);
+        // try to ensure next x_plus is closer to x than x_old
+        pert[i] = GRIMPL_NS::clamp(0.5 * std::fabs(x[i] - x_old) / x[i],
+                                   minpert, pert[i]);
 
         if (x[i] < giveup_small_x_threshold) {
           solvemask[i] = SolveStatus::SKIP_SOLVE;
