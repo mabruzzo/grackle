@@ -396,6 +396,12 @@ void cool1d_multi_g(
     }
   }
 
+  handle_dust_cooling_contributions(
+      edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
+      rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
+      my_rates, my_fields, sp_densities, internalu, idx_range,
+      logTlininterp_buf);
+
   // --- H2 cooling ---
 
   if (my_chemistry->primordial_chemistry > 1) {
@@ -776,12 +782,6 @@ void cool1d_multi_g(
       }
     }
   }
-
-  handle_dust_cooling_contributions(
-      edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
-      rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
-      my_rates, my_fields, sp_densities, internalu, idx_range,
-      logTlininterp_buf);
 
   // --- Compute (external) radiative heating terms ---
   // Photoionization heating
