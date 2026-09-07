@@ -280,9 +280,10 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 
 void handle_dust_cooling_contributions(
     gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
-    double* nH, const double* metallicity, const gr_mask_type* itmask,
-    const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
-    chemistry_data_storage* my_rates, grackle_field_data* my_fields,
+    const double* nelec_times_mH, double* nH, const double* metallicity,
+    const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
+    chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
+    grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
@@ -290,6 +291,9 @@ void handle_dust_cooling_contributions(
     double* gasgr_tdust, double* myisrf,
     InternalDustPropBuf internal_dust_prop_buf, double* alpha_continuum) {
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
+
+  const double dom = internalu_calc_dom_(internalu);
+  const double dom_inv = 1. / dom;
 
   FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
                              my_fields->grid_dimension[1],
@@ -327,7 +331,6 @@ void handle_dust_cooling_contributions(
   // in the classic single-species dust model
   if ((anydust != MASK_FALSE) && (my_chemistry->dust_species > 0)) {
     const double mh_local_var = constants::mH_grflt;
-    const double dom = internalu_calc_dom_(internalu);
     int n_grain_species =
         my_rates->opaque_storage->grain_species_info->n_species();
     for (int i = idx_range.i_start; i <= idx_range.i_end; i++) {
@@ -352,6 +355,19 @@ void handle_dust_cooling_contributions(
     dust_gas_edot::update_edot_dust_cooling_rate(
         edot, tgas, tdust, grain_temperatures, dust2gas, rhoH, itmask_metal,
         my_chemistry, idx_range, d, gasgr.data(), gas_grainsp_heatrate);
+  }
+
+  // Photo-electric heating by UV-irradiated dust
+  dust_gas_edot::update_edot_photoelectric_heat(
+      edot, tgas, dust2gas, rhoH, nelec_times_mH, myisrf, itmask, my_chemistry,
+      my_rates->gammah, idx_range, dom_inv);
+
+  // Electron recombination onto dust grains (eqn. 9 of Wolfire 1995)
+  if (my_chemistry->dust_recombination_cooling > 0) {
+    dust_gas_edot::update_edot_dust_recombination(
+        edot, tgas, dust2gas, rhoH, nelec_times_mH, myisrf, itmask,
+        my_chemistry->local_dust_to_gas_ratio, logTlininterp_buf,
+        my_rates->regr, idx_range, dom_inv);
   }
 
   drop_GrainSpeciesCollection(&grain_kappa);

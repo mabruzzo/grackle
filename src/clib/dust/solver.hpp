@@ -111,9 +111,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// this is a helper function that handles all dust contributions pertaining
 /// to cool1d_multi_g
 ///
-/// At the moment, we are gradually shifting functionality into this function
-/// (it does not yet handle dust edot contributions)
-///
 /// @param[in] anydust Whether dust chemistry is enabled
 /// @param[out] edot 1D array to hold the computed the time derivative of the
 ///     internal energy in the @p idx_range. Contributions are accumulated in
@@ -121,6 +118,8 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     to 0 before adding contributions.
 /// @param[in] tgas 1d array of gas temperature
 /// @param[in] rhoH 1D array of Hydrogen mass densities for the @p idx_range
+/// @param[in] nelec_times_mH 1D array holding the number density of electrons
+///     (multiplied by the Hydrogen mass) for the @p idx_range
 /// @param[in] nH 1d array of Hydrogen number densities
 /// @param[in] metallicity 1d array of metallicities
 /// @param[in] itmask Specifies the general iteration-mask of the @p idx_range
@@ -163,9 +162,10 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///   follow.
 void handle_dust_cooling_contributions(
     gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
-    double* nH, const double* metallicity, const gr_mask_type* itmask,
-    const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
-    chemistry_data_storage* my_rates, grackle_field_data* my_fields,
+    const double* nelec_times_mH, double* nH, const double* metallicity,
+    const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
+    chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
+    grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
