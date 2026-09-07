@@ -168,7 +168,6 @@ void cool1d_multi_g(
   double lognhat;
   std::vector<double> logdvdr(my_fields->grid_dimension[0]);
   double log_Linv, log_Ginv, L, G;
-  std::vector<double> Lpri(my_fields->grid_dimension[0]);
   std::vector<double> LH2(my_fields->grid_dimension[0]);
   std::vector<double> LCIE(my_fields->grid_dimension[0]);
   std::vector<double> LHD(my_fields->grid_dimension[0]);
@@ -212,6 +211,18 @@ void cool1d_multi_g(
   for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
     alpha_continuum[i] = 0.0;
   }
+
+  // based on configuration precise configuration, perform a subset of:
+  // - compute Tdust, dust2gas
+  // - add contributions to alpha_continuum, edot from dust
+  //
+  // in the immediate future, the plan is to hoist this function call out of
+  // cool1d_multi_g
+  handle_dust_cooling_contributions(
+      edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
+      rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
+      my_rates, my_fields, sp_densities, internalu, idx_range,
+      logTlininterp_buf);
 
   // Compute log densities
 
@@ -330,7 +341,7 @@ void cool1d_multi_g(
 
     for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
       if (itmask[i] != MASK_FALSE) {
-        edot[i] = (
+        edot[i] += (
 
             // Collisional excitations
 
@@ -377,7 +388,6 @@ void cool1d_multi_g(
                   de(i, idx_range.j, idx_range.k)
 
         );
-        Lpri[i] = edot[i];
 
         if (edot[i] != edot[i]) {
           OMP_PRAGMA_CRITICAL {
@@ -395,12 +405,6 @@ void cool1d_multi_g(
       }
     }
   }
-
-  handle_dust_cooling_contributions(
-      edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
-      rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
-      my_rates, my_fields, sp_densities, internalu, idx_range,
-      logTlininterp_buf);
 
   // --- H2 cooling ---
 
