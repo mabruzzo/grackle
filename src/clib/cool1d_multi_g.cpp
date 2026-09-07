@@ -150,8 +150,6 @@ void cool1d_multi_g(
   std::vector<double> gael(my_fields->grid_dimension[0]);
   std::vector<double> h2lte(my_fields->grid_dimension[0]);
   std::vector<double> galdl(my_fields->grid_dimension[0]);
-  // holds values of the interstellar radiation field
-  std::vector<double> myisrf(my_fields->grid_dimension[0]);
   std::vector<double> cieY06(my_fields->grid_dimension[0]);
 
   std::vector<double> logT(my_fields->grid_dimension[0]);
@@ -803,7 +801,7 @@ void cool1d_multi_g(
       anydust, edot, tgas, rhoH, nelec_times_mH, cool1dmulti_buf.mynh,
       metallicity, itmask, itmask_metal, my_chemistry, my_rates, my_fields,
       sp_densities, internalu, idx_range, logTlininterp_buf, comp2, dust2gas,
-      tdust, grain_temperatures, cool1dmulti_buf.gasgr_tdust, myisrf.data(),
+      tdust, grain_temperatures, cool1dmulti_buf.gasgr_tdust,
       alpha_continuum.data());
 
   // --- Compute (external) radiative heating terms ---

@@ -288,7 +288,7 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* gasgr_tdust, double* myisrf, double* alpha_continuum) {
+    double* gasgr_tdust, double* alpha_continuum) {
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
 
   const double dom = internalu_calc_dom_(internalu);
@@ -318,12 +318,15 @@ void handle_dust_cooling_contributions(
   // closely related to gas_grainsp_heatrate
   std::vector<double> gasgr(my_fields->grid_dimension[0]);
 
+  // holds values of the interstellar radiation field
+  std::vector<double> myisrf(my_fields->grid_dimension[0]);
+
   // compute various dust properties
   dust_related_props(anydust, tgas, nH, metallicity, itmask, itmask_metal,
                      my_chemistry, my_rates, my_fields, sp_densities, internalu,
                      idx_range, logTlininterp_buf, rad_T, dust2gas, tdust,
                      grain_temperatures, gasgr.data(), gas_grainsp_heatrate,
-                     kappa_tot.data(), grain_kappa, gasgr_tdust, myisrf,
+                     kappa_tot.data(), grain_kappa, gasgr_tdust, myisrf.data(),
                      internal_dust_prop_buf);
 
   // Add contributions from dust opacity to alpha_continuum, the continuum
@@ -365,13 +368,13 @@ void handle_dust_cooling_contributions(
 
   // Photo-electric heating by UV-irradiated dust
   dust_gas_edot::update_edot_photoelectric_heat(
-      edot, tgas, dust2gas, rhoH, nelec_times_mH, myisrf, itmask, my_chemistry,
-      my_rates->gammah, idx_range, dom_inv);
+      edot, tgas, dust2gas, rhoH, nelec_times_mH, myisrf.data(), itmask,
+      my_chemistry, my_rates->gammah, idx_range, dom_inv);
 
   // Electron recombination onto dust grains (eqn. 9 of Wolfire 1995)
   if (my_chemistry->dust_recombination_cooling > 0) {
     dust_gas_edot::update_edot_dust_recombination(
-        edot, tgas, dust2gas, rhoH, nelec_times_mH, myisrf, itmask,
+        edot, tgas, dust2gas, rhoH, nelec_times_mH, myisrf.data(), itmask,
         my_chemistry->local_dust_to_gas_ratio, logTlininterp_buf,
         my_rates->regr, idx_range, dom_inv);
   }
