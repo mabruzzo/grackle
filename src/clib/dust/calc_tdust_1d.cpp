@@ -25,7 +25,6 @@
 #include "fortran_func_wrappers.hpp"
 #include "phys_constants.hpp"
 #include "support/config.hpp"
-#include "support/misc.hpp"
 #include "support/status_reporting.hpp"
 #include "utils-cpp.hpp"
 
@@ -157,8 +156,8 @@ static EqnSolveRslt unchecked_bisect(
         // if x_a, x_b, or x_mid isn't finite, branchless choice will act
         // weird (but we will be pretty doomed in that scenario, anyway)
         bool update_a = eval_rslt.f_val > 0.0;
-        x_a[i] = branchless_choice(update_a, x_mid, x_a[i]);
-        x_b[i] = branchless_choice(update_a, x_b[i], x_mid);
+        x_a[i] = update_a ? x_mid : x_a[i];
+        x_b[i] = update_a ? x_b[i] : x_mid;
 
         if (std::fabs(x_b[i] - x_a[i]) <= std::fabs(x_a[i]) * rtol) {
           solvemask[i] = SolveStatus::CONVERGED;
