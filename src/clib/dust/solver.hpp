@@ -6,7 +6,7 @@
 //===----------------------------------------------------------------------===//
 ///
 /// @file
-/// Declares logic pertaining to solving dust chemistry
+/// Declares/implements @ref DustSolver
 ///
 //===----------------------------------------------------------------------===//
 
@@ -23,6 +23,28 @@
 #include "../support/index_helper.hpp"
 
 namespace GRIMPL_NAMESPACE_DECL {
+
+/// @brief Provides a standard interface for computing the contributions of
+///     dust chemistry to the overall chemistry solve
+///
+/// The basic premise is that:
+/// - while performing the full chemistry calculation, the rest of grackle
+///   doesn't need to know anything at all about the dust model beyond this
+///   object (this is somewhat aspirational, right now make_consistent and
+///   the step_rate_ functions still require some knowledge, but we're moving
+///   away from that)
+/// - objects of this type are immutable. After they are created, they have no
+///   mutable state (any scratch buffers will need to be passed in)
+class DustSolver {
+  // in the future, we'll add some configuration data
+  // - example: when using the Chiaki multi-grain-species-growth model, we may
+  //   track injection pathway information as part of this type (after we
+  //   decouple metal-chemistry from injection pathway information)
+
+public:
+  /// @brief default constructor
+  DustSolver() = default;
+};
 
 /// Look-up rate for H2 formation on dust & (in certain configurations) the
 /// grain growth rates for each location in the index-range.
