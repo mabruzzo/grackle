@@ -146,7 +146,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// @param[in] logTlininterp_buf hold values for each location in @p idx_range
 ///     that are used to linearly interpolate tables with respect to the
 ///     natural log of @p tgas.
-/// @param[in] trad Holds the CMB temperature at the current redshift
 ///
 /// @note
 /// In some sense, this is a step towards factoring out all of the dust logic.
@@ -161,7 +160,7 @@ void handle_dust_cooling_contributions(
     chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
-    LnTLinInterpBuf logTlininterp_buf, double rad_T);
+    LnTLinInterpBuf logTlininterp_buf);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 

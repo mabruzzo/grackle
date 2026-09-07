@@ -287,7 +287,7 @@ void handle_dust_cooling_contributions(
     chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
-    LnTLinInterpBuf logTlininterp_buf, double rad_T) {
+    LnTLinInterpBuf logTlininterp_buf) {
   // Set flag for dust-related options
 
   const gr_mask_type anydust = (my_chemistry->dust_chemistry > 0 ||
@@ -299,6 +299,7 @@ void handle_dust_cooling_contributions(
 
   const double dom = internalu_calc_dom_(internalu);
   const double dom_inv = 1. / dom;
+  const double rad_T = internalu_calc_Tcmb_(internalu);
 
   FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
                              my_fields->grid_dimension[1],

@@ -21,6 +21,7 @@
 #include "dust/multi_grain_species/dust_props.hpp"
 #include "dust/solver.hpp"
 #include "grackle.h"
+#include "internal_units.hpp"
 #include "interpolate.hpp"
 #include "inject_model/grain_metal_inject_pathways.hpp"
 #include "internal_types.hpp"
@@ -203,7 +204,7 @@ void cool1d_multi_g(
   // Set compton cooling coefficients (and temperature)
 
   comp1 = my_rates->comp * std::pow((1. + zr), 4);
-  comp2 = 2.73 * (1. + zr);
+  comp2 = internalu_calc_Tcmb_(internalu);
 
   // multiplicative factor for including/excluding H2 cooling
   ih2cox = (double)(my_chemistry->ih2co);
@@ -781,7 +782,7 @@ void cool1d_multi_g(
       edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
       rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
       my_rates, my_fields, sp_densities, internalu, idx_range,
-      logTlininterp_buf, comp2);
+      logTlininterp_buf);
 
   // --- Compute (external) radiative heating terms ---
   // Photoionization heating
