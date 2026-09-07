@@ -185,14 +185,6 @@ void cool1d_multi_g(
 
   const gr_opaque_storage& opaque_storage = *my_rates->opaque_storage;
 
-  // buffers of intermediate quantities used within dust-routines (for
-  // calculating quantites related to heating/cooling)
-  grackle::impl::InternalDustPropBuf internal_dust_prop_buf =
-      grackle::impl::new_InternalDustPropBuf(
-          my_fields->grid_dimension[0],
-          GrainMetalInjectPathways_get_n_log10Tdust_vals(
-              opaque_storage.inject_pathway_props));
-
   // Iteration mask
 
   gr_mask_type anydust;
@@ -812,7 +804,7 @@ void cool1d_multi_g(
       metallicity, itmask, itmask_metal, my_chemistry, my_rates, my_fields,
       sp_densities, internalu, idx_range, logTlininterp_buf, comp2, dust2gas,
       tdust, grain_temperatures, cool1dmulti_buf.gasgr_tdust, myisrf.data(),
-      internal_dust_prop_buf, alpha_continuum.data());
+      alpha_continuum.data());
 
   // --- Compute (external) radiative heating terms ---
   // Photoionization heating
@@ -1262,9 +1254,6 @@ void cool1d_multi_g(
       }
     }
   }
-
-  // Free memory
-  grackle::impl::drop_InternalDustPropBuf(&internal_dust_prop_buf);
 
   return;
 }

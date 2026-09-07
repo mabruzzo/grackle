@@ -288,8 +288,7 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* gasgr_tdust, double* myisrf,
-    InternalDustPropBuf internal_dust_prop_buf, double* alpha_continuum) {
+    double* gasgr_tdust, double* myisrf, double* alpha_continuum) {
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
 
   const double dom = internalu_calc_dom_(internalu);
@@ -298,6 +297,13 @@ void handle_dust_cooling_contributions(
   FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
                              my_fields->grid_dimension[1],
                              my_fields->grid_dimension[2]);
+
+  // buffers of intermediate quantities used within dust-routines (for
+  // calculating quantites related to heating/cooling)
+  InternalDustPropBuf internal_dust_prop_buf = new_InternalDustPropBuf(
+      my_fields->grid_dimension[0],
+      GrainMetalInjectPathways_get_n_log10Tdust_vals(
+          my_rates->opaque_storage->inject_pathway_props));
 
   // opacity coefficients for each dust grain (the product of opacity
   // coefficient & gas mass density is the linear absortpion coefficient)
@@ -370,6 +376,8 @@ void handle_dust_cooling_contributions(
         my_rates->regr, idx_range, dom_inv);
   }
 
+  // Free memory
+  drop_InternalDustPropBuf(&internal_dust_prop_buf);
   drop_GrainSpeciesCollection(&grain_kappa);
   drop_GrainSpeciesCollection(&gas_grainsp_heatrate);
 }

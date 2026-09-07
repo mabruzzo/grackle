@@ -149,8 +149,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     (with some refactoring, this can probably be removed)
 /// @param[in,out] myisrf a scratch buffer that may be used to temporarily
 ///     record the interstellar radiation field
-/// @param[in,out] internal_dust_prop_buf Holds scratch-space for holding
-///     grain-specific information
 /// @param[out] alpha_continuum buffer to which linear absorption
 ///     coefficients from dust are added (each element is updated in place with
 ///     the sum of its existing value and the contribution from dust). In
@@ -170,8 +168,7 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* gasgr_tdust, double* myisrf,
-    InternalDustPropBuf internal_dust_prop_buf, double* alpha_continuum);
+    double* gasgr_tdust, double* myisrf, double* alpha_continuum);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 
