@@ -286,15 +286,62 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures, double* gasgr,
-    GrainSpeciesCollection gas_grainsp_heatrate, double* kappa_tot,
-    GrainSpeciesCollection grain_kappa, double* gasgr_tdust, double* myisrf,
-    InternalDustPropBuf internal_dust_prop_buf) {
+    GrainSpeciesCollection gas_grainsp_heatrate, double* gasgr_tdust,
+    double* myisrf, InternalDustPropBuf internal_dust_prop_buf,
+    double* alpha_continuum) {
+  const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
+
+  // opacity coefficients for each dust grain (the product of opacity
+  // coefficient & gas mass density is the linear absortpion coefficient)
+  GrainSpeciesCollection grain_kappa =
+      new_GrainSpeciesCollection(my_fields->grid_dimension[0]);
+  // closely related to grain_kappa
+  std::vector<double> kappa_tot(my_fields->grid_dimension[0]);
+
   // compute various dust properties
   dust_related_props(anydust, tgas, nH, metallicity, itmask, itmask_metal,
                      my_chemistry, my_rates, my_fields, sp_densities, internalu,
                      idx_range, logTlininterp_buf, rad_T, dust2gas, tdust,
-                     grain_temperatures, gasgr, gas_grainsp_heatrate, kappa_tot,
-                     grain_kappa, gasgr_tdust, myisrf, internal_dust_prop_buf);
+                     grain_temperatures, gasgr, gas_grainsp_heatrate,
+                     kappa_tot.data(), grain_kappa, gasgr_tdust, myisrf,
+                     internal_dust_prop_buf);
+
+  // Add contributions from dust opacity to alpha_continuum, the continuum
+  // linear absorption coefficient
+  //
+  // The original Fortran version of this logic had the following 2
+  // comments:
+  //    ! if (idspecies .eq. 0), dust opacity is overestimated at Td > 50 K
+  //    ! We better not include dust opacity.
+  // I think this comment explains why we aren't including dust contributions
+  // in the classic single-species dust model
+  if ((anydust != MASK_FALSE) && (my_chemistry->dust_species > 0)) {
+    FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
+                               my_fields->grid_dimension[1],
+                               my_fields->grid_dimension[2]);
+
+    const double mh_local_var = constants::mH_grflt;
+    const double dom = internalu_calc_dom_(internalu);
+    int n_grain_species =
+        my_rates->opaque_storage->grain_species_info->n_species();
+    for (int i = idx_range.i_start; i <= idx_range.i_end; i++) {
+      if (itmask_metal[i] != MASK_FALSE) {
+        double kappa_sum = 0.0;
+        if (single_species_dust_model) {
+          kappa_sum = kappa_tot[i];
+        } else {
+          for (int grsp_i = 0; grsp_i < n_grain_species; grsp_i++) {
+            kappa_sum += grain_kappa.data[grsp_i][i];
+          }
+        }
+
+        alpha_continuum[i] +=
+            kappa_sum * d(i, idx_range.j, idx_range.k) * dom * mh_local_var;
+      }
+    }
+  }
+
+  drop_GrainSpeciesCollection(&grain_kappa);
 }
 
 }  // namespace GRIMPL_NAMESPACE_DECL

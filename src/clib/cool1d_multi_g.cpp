@@ -125,8 +125,6 @@ void cool1d_multi_g(
   // Declare some constants:
   const double mh_local_var = constants::mH_grflt;
 
-  const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
-
   // Locals
   int i, iZscale, mycmbTfloor;
   double dom, qq, vibl, zr, hdlte1, hdlow1, fudge, gphdl1, dom_inv, tau,
@@ -196,12 +194,6 @@ void cool1d_multi_g(
           my_fields->grid_dimension[0],
           GrainMetalInjectPathways_get_n_log10Tdust_vals(
               opaque_storage.inject_pathway_props));
-  // opacity coefficients for each dust grain (the product of opacity
-  // coefficient & gas mass density is the linear absortpion coefficient)
-  grackle::impl::GrainSpeciesCollection grain_kappa =
-      grackle::impl::new_GrainSpeciesCollection(my_fields->grid_dimension[0]);
-  // closely related to grain_kappa
-  std::vector<double> kappa_tot(my_fields->grid_dimension[0]);
   // holds the gas/grain-species heat transfer rates
   grackle::impl::GrainSpeciesCollection gas_grainsp_heatrate =
       grackle::impl::new_GrainSpeciesCollection(my_fields->grid_dimension[0]);
@@ -824,42 +816,14 @@ void cool1d_multi_g(
       anydust, tgas, cool1dmulti_buf.mynh, metallicity, itmask, itmask_metal,
       my_chemistry, my_rates, my_fields, sp_densities, internalu, idx_range,
       logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
-      gasgr.data(), gas_grainsp_heatrate, kappa_tot.data(), grain_kappa,
-      cool1dmulti_buf.gasgr_tdust, myisrf.data(), internal_dust_prop_buf);
+      gasgr.data(), gas_grainsp_heatrate, cool1dmulti_buf.gasgr_tdust,
+      myisrf.data(), internal_dust_prop_buf, alpha_continuum.data());
 
   // Calculate dust cooling rate
   if (anydust != MASK_FALSE) {
     dust_gas_edot::update_edot_dust_cooling_rate(
         edot, tgas, tdust, grain_temperatures, dust2gas, rhoH, itmask_metal,
         my_chemistry, idx_range, d, gasgr.data(), gas_grainsp_heatrate);
-  }
-
-  // Add contributions from dust opacity to alpha_continuum, the continuum
-  // linear absorption coefficient
-  //
-  //  The original Fortran version of this function had the following 2
-  //  comments:
-  //    ! if (idspecies .eq. 0), dust opacity is overestimated at Td > 50 K
-  //    ! We better not include dust opacity.
-  // It's a little unclear how relevant these comments actually are.
-  if ((anydust != MASK_FALSE) && (my_chemistry->dust_species > 0)) {
-    int n_grain_species =
-        my_rates->opaque_storage->grain_species_info->n_species();
-    for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
-      if (itmask_metal[i] != MASK_FALSE) {
-        double kappa_sum = 0.0;
-        if (single_species_dust_model) {
-          kappa_sum = kappa_tot[i];
-        } else {
-          for (int grsp_i = 0; grsp_i < n_grain_species; grsp_i++) {
-            kappa_sum += grain_kappa.data[grsp_i][i];
-          }
-        }
-
-        alpha_continuum[i] +=
-            kappa_sum * d(i, idx_range.j, idx_range.k) * dom * mh_local_var;
-      }
-    }
   }
 
   // --- Compute (external) radiative heating terms ---
@@ -1326,7 +1290,6 @@ void cool1d_multi_g(
 
   // Free memory
   grackle::impl::drop_InternalDustPropBuf(&internal_dust_prop_buf);
-  grackle::impl::drop_GrainSpeciesCollection(&grain_kappa);
   grackle::impl::drop_GrainSpeciesCollection(&gas_grainsp_heatrate);
 
   return;

@@ -112,8 +112,7 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// to cool1d_multi_g
 ///
 /// At the moment, we are gradually shifting functionality into this function
-/// (it does not yet handle dust edot contributions or adding to the continuum
-/// opacity)
+/// (it does not yet handle dust edot contributions)
 ///
 /// @param[in] anydust Whether dust chemistry is enabled
 /// @param[in] tgas 1d array of gas temperature
@@ -144,14 +143,16 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     to one of these variables, based on configuration
 /// @param[out] gasgr, gas_grainsp_heatrate Grain/gas energy transfer rates may
 ///     be written to one of these variables, based on configuration
-/// @param[out] kappa_tot, grain_kappa Opacity-related information may be
-///     written to one of these variables, based on configuration
 /// @param[in,out] gasgr_tdust A 1D array of that acts as a scratch buffer
 ///     (with some refactoring, this can probably be removed)
 /// @param[in,out] myisrf a scratch buffer that may be used to temporarily
 ///     record the interstellar radiation field
 /// @param[in,out] internal_dust_prop_buf Holds scratch-space for holding
 ///     grain-specific information
+/// @param[out] alpha_continuum buffer to which linear absorption
+///     coefficients from dust are added (each element is updated in place with
+///     the sum of its existing value and the contribution from dust). In
+///     certain configurations this is not actually updated.
 ///
 /// @note
 /// In some sense, this is a step towards factoring out all of the dust logic.
@@ -166,9 +167,9 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures, double* gasgr,
-    GrainSpeciesCollection gas_grainsp_heatrate, double* kappa_tot,
-    GrainSpeciesCollection grain_kappa, double* gasgr_tdust, double* myisrf,
-    InternalDustPropBuf internal_dust_prop_buf);
+    GrainSpeciesCollection gas_grainsp_heatrate, double* gasgr_tdust,
+    double* myisrf, InternalDustPropBuf internal_dust_prop_buf,
+    double* alpha_continuum);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 
