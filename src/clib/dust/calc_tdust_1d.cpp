@@ -170,11 +170,13 @@ static EqnSolveRslt unchecked_bisect(
 }
 
 template <typename Fn>
-static EqnSolveRslt finite_diff_newton(
-    const Fn& fn, double* x, double* associated_vals, double* f_vals,
-    double* fplus_vals, SolveStatus* solvemask, double* pert, double minpert,
-    int i_start, int i_stop, double giveup_small_x_threshold, double max_x,
-    double rtol, int max_iter) {
+static EqnSolveRslt finite_diff_newton(const Fn& fn, double* x,
+                                       double* associated_vals, double* f_vals,
+                                       SolveStatus* solvemask, double* pert,
+                                       double minpert, int i_start, int i_stop,
+                                       double giveup_small_x_threshold,
+                                       double max_x, double rtol,
+                                       int max_iter) {
   int n_to_solve = 0;
 
   double pert_i = 1.e-3;
@@ -197,14 +199,9 @@ static EqnSolveRslt finite_diff_newton(
       if (solvemask[i] == SolveStatus::UNCONVERGED) {
         double x_plus = std::fmax(1.e-3, (1. + pert[i]) * x[i]);
         FnEval eval_rslt = fn(x_plus, i);
-        fplus_vals[i] = eval_rslt.f_val;
-        // we don't need to record eval_rslt.associated_val
-      }
-    }
-
-    for (int i = i_start; i < i_stop; i++) {
-      if (solvemask[i] == SolveStatus::UNCONVERGED) {
-        double slope = (fplus_vals[i] - f_vals[i]) / (pert[i] * x[i]);
+        double fplus_val = eval_rslt.f_val;
+        // it would be more robust to directly divide by (x_plus - x[i])
+        double slope = (fplus_val - f_vals[i]) / (pert[i] * x[i]);
 
         double x_old = x[i];
         x[i] = std::fmin(x[i] - (f_vals[i] / slope), max_x);
@@ -216,7 +213,7 @@ static EqnSolveRslt finite_diff_newton(
           solvemask[i] = SolveStatus::SKIP_SOLVE;
           n_to_solve--;
           any_giveups = true;
-        } else if (std::fabs(f_vals[i]) < std::fabs(fplus_vals[i] * rtol)) {
+        } else if (std::fabs(f_vals[i]) < std::fabs(fplus_val * rtol)) {
           solvemask[i] = SolveStatus::CONVERGED;
           n_to_solve--;
         }
@@ -289,7 +286,6 @@ void calc_tdust_1d_(double* tdust, const double* tgas, const double* nh,
   // Slice Locals
 
   std::vector<double> sol(buf_len);
-  std::vector<double> solplus(buf_len);
   // holds dust temperature guess for the current root-finding iteration
   std::vector<double> tdustnow(buf_len);
   // relative finite difference step size
@@ -339,12 +335,11 @@ void calc_tdust_1d_(double* tdust, const double* tgas, const double* nh,
 
     double* associated_vals = kgr;
     double* f_vals = sol.data();
-    double* fplus_vals = solplus.data();
 
     EqnSolveRslt rslt = finite_diff_newton(
-        fn, x, associated_vals, f_vals, fplus_vals, solvemask.data(),
-        pert.data(), minpert, idx_range.i_start, idx_range.i_stop,
-        giveup_small_x_threshold, max_x, tol, itmax);
+        fn, x, associated_vals, f_vals, solvemask.data(), pert.data(), minpert,
+        idx_range.i_start, idx_range.i_stop, giveup_small_x_threshold, max_x,
+        tol, itmax);
     iter = rslt.iterations;
     at_least_one_bisection = at_least_one_bisection || !rslt.all_solved;
   }
