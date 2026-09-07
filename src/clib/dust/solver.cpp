@@ -6,7 +6,7 @@
 //===----------------------------------------------------------------------===//
 ///
 /// @file
-/// Implements logic pertaining to solving dust chemistry
+/// Implements the @ref DustSolver type
 ///
 //===----------------------------------------------------------------------===//
 
@@ -36,14 +36,14 @@ namespace GRIMPL_NAMESPACE_DECL {
 // - we may also want to give some thought to possibly grouping subsets of the
 //   arguments that are only used for certain dust models.
 
-void lookup_dust_rates1d(
+void DustSolver::lookup_dust_rates1d(
     IndexRange idx_range, const double* tdust, const double* dust2gas,
     double dom, const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
     chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     SpeciesMultiView<const gr_float> sp_densities,
     GrainSpeciesCollection grain_temperatures,
     LnTLinInterpBuf logTlininterp_buf, FullRxnRateBuf rxn_rate_buf,
-    InternalDustPropBuf internal_dust_prop_scratch_buf) {
+    InternalDustPropBuf internal_dust_prop_scratch_buf) const {
   // TODO: get rid of dlogtem argument!
 
   const double dlogTdust =

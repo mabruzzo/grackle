@@ -810,10 +810,10 @@ inline void lookup_cool_rates1d(
   // Look-up rate for H2 formation on dust & (when relevant) grain growth rates
 
   if (anydust != MASK_FALSE) {
-    lookup_dust_rates1d(idx_range, tdust, dust2gas, dom, itmask_metal,
-                        my_chemistry, my_rates, my_fields, species_densities,
-                        grain_temperatures, logTlininterp_buf, rxn_rate_buf,
-                        internal_dust_prop_scratch_buf);
+    my_rates->opaque_storage->dust_solver.lookup_dust_rates1d(
+        idx_range, tdust, dust2gas, dom, itmask_metal, my_chemistry, my_rates,
+        my_fields, species_densities, grain_temperatures, logTlininterp_buf,
+        rxn_rate_buf, internal_dust_prop_scratch_buf);
   }
 
   // Deal with the photo reaction rates
