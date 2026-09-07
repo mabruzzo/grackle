@@ -146,8 +146,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     per unit gas mass (only used in certain configuration)
 /// @param[out] tdust, grain_temperatures dust temperatures may be written
 ///     to one of these variables, based on configuration
-/// @param[out] gasgr, gas_grainsp_heatrate Grain/gas energy transfer rates may
-///     be written to one of these variables, based on configuration
 /// @param[in,out] gasgr_tdust A 1D array of that acts as a scratch buffer
 ///     (with some refactoring, this can probably be removed)
 /// @param[in,out] myisrf a scratch buffer that may be used to temporarily
@@ -171,10 +169,9 @@ void handle_dust_cooling_contributions(
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
-    double* tdust, GrainSpeciesCollection grain_temperatures, double* gasgr,
-    GrainSpeciesCollection gas_grainsp_heatrate, double* gasgr_tdust,
-    double* myisrf, InternalDustPropBuf internal_dust_prop_buf,
-    double* alpha_continuum);
+    double* tdust, GrainSpeciesCollection grain_temperatures,
+    double* gasgr_tdust, double* myisrf,
+    InternalDustPropBuf internal_dust_prop_buf, double* alpha_continuum);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 

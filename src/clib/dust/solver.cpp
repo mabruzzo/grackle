@@ -286,10 +286,9 @@ void handle_dust_cooling_contributions(
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
-    double* tdust, GrainSpeciesCollection grain_temperatures, double* gasgr,
-    GrainSpeciesCollection gas_grainsp_heatrate, double* gasgr_tdust,
-    double* myisrf, InternalDustPropBuf internal_dust_prop_buf,
-    double* alpha_continuum) {
+    double* tdust, GrainSpeciesCollection grain_temperatures,
+    double* gasgr_tdust, double* myisrf,
+    InternalDustPropBuf internal_dust_prop_buf, double* alpha_continuum) {
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
 
   FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
@@ -303,11 +302,17 @@ void handle_dust_cooling_contributions(
   // closely related to grain_kappa
   std::vector<double> kappa_tot(my_fields->grid_dimension[0]);
 
+  // holds the gas/grain-species heat transfer rates
+  GrainSpeciesCollection gas_grainsp_heatrate =
+      new_GrainSpeciesCollection(my_fields->grid_dimension[0]);
+  // closely related to gas_grainsp_heatrate
+  std::vector<double> gasgr(my_fields->grid_dimension[0]);
+
   // compute various dust properties
   dust_related_props(anydust, tgas, nH, metallicity, itmask, itmask_metal,
                      my_chemistry, my_rates, my_fields, sp_densities, internalu,
                      idx_range, logTlininterp_buf, rad_T, dust2gas, tdust,
-                     grain_temperatures, gasgr, gas_grainsp_heatrate,
+                     grain_temperatures, gasgr.data(), gas_grainsp_heatrate,
                      kappa_tot.data(), grain_kappa, gasgr_tdust, myisrf,
                      internal_dust_prop_buf);
 
@@ -346,10 +351,11 @@ void handle_dust_cooling_contributions(
   if (anydust != MASK_FALSE) {
     dust_gas_edot::update_edot_dust_cooling_rate(
         edot, tgas, tdust, grain_temperatures, dust2gas, rhoH, itmask_metal,
-        my_chemistry, idx_range, d, gasgr, gas_grainsp_heatrate);
+        my_chemistry, idx_range, d, gasgr.data(), gas_grainsp_heatrate);
   }
 
   drop_GrainSpeciesCollection(&grain_kappa);
+  drop_GrainSpeciesCollection(&gas_grainsp_heatrate);
 }
 
 }  // namespace GRIMPL_NAMESPACE_DECL
