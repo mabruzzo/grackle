@@ -169,6 +169,16 @@ static EqnSolveRslt unchecked_bisect(
   return EqnSolveRslt{n_unconverged == 0, iter + 1};
 }
 
+/// @brief Find root of a function within an interval at a number of locations
+///
+/// Use a variant of newton's method to find an array of roots for @p fn (a
+/// scalar-valued function that does NOT directly compute the derivative).
+/// Derivatives are estimated via finite differences. Values associated with
+/// the function evaluation are recorded to @p associated_vals
+///
+/// This function makes strong assumptions about the allowed range of x-values.
+/// It is also designed to help the caller fall back to an alternative method
+/// (e.g. bisection) upon failure.
 template <typename Fn>
 static EqnSolveRslt finite_diff_newton(const Fn& fn, double* x,
                                        double* associated_vals, double* f_vals,
@@ -197,15 +207,28 @@ static EqnSolveRslt finite_diff_newton(const Fn& fn, double* x,
     }
     for (int i = i_start; i < i_stop; i++) {
       if (solvemask[i] == SolveStatus::UNCONVERGED) {
+        // (outside of the very first iteration), the combination of using
+        // giveup_small_x_threshold and applying fmax to xplus doesn't make a
+        // lot of sense. Given that pert is guaranteed to be positive:
+        // - when giveup_small_x_threshold > 1.0e-3, this operation is totally
+        //   unnecessary
+        // - 1.0e-3 > when giveup_small_x_threshold > 0, then the value of
+        //   (x_plus-x[i])/x[i] may get huge!
+        // thus, instead of applying fmax to x_plus, it would be more robust
+        // to apply fmax to giveup_small_x_threshold and add an initial check
+        // to comparing x and giveup_small_x_threshold
         double x_plus = std::fmax(1.e-3, (1. + pert[i]) * x[i]);
         FnEval eval_rslt = fn(x_plus, i);
         double fplus_val = eval_rslt.f_val;
-        // it would be more robust to directly divide by (x_plus - x[i])
+        // it would be slightly faster to compute 1.0/slope
         double slope = (fplus_val - f_vals[i]) / (pert[i] * x[i]);
 
         double x_old = x[i];
+        // note: next line is erroneous if fplus_val - f_vals is exactly 0
         x[i] = std::fmin(x[i] - (f_vals[i] / slope), max_x);
 
+        // why are we trying to reduce the size of pert? Is this an attempt to
+        // avoid nonconvergent cycles?
         pert[i] = std::fmax(
             std::fmin(pert[i], 0.5 * std::fabs(x[i] - x_old) / x[i]), minpert);
 
