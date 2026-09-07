@@ -185,18 +185,10 @@ void cool1d_multi_g(
 
   // Iteration mask
 
-  gr_mask_type anydust;
   std::vector<gr_mask_type> itmask_tab(my_fields->grid_dimension[0]);
 
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////
   // =======================================================================
-
-  // Set flag for dust-related options
-
-  anydust = (my_chemistry->dust_chemistry > 0 ||
-             my_chemistry->dust_recombination_cooling > 0)
-                ? MASK_TRUE
-                : MASK_FALSE;
 
   // Set units
 
@@ -786,9 +778,9 @@ void cool1d_multi_g(
   }
 
   handle_dust_cooling_contributions(
-      anydust, edot, tgas, rhoH, nelec_times_mH, metallicity, itmask,
-      itmask_metal, my_chemistry, my_rates, my_fields, sp_densities, internalu,
-      idx_range, logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
+      edot, tgas, rhoH, nelec_times_mH, metallicity, itmask, itmask_metal,
+      my_chemistry, my_rates, my_fields, sp_densities, internalu, idx_range,
+      logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
       alpha_continuum.data());
 
   // --- Compute (external) radiative heating terms ---

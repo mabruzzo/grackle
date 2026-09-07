@@ -279,7 +279,7 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 }
 
 void handle_dust_cooling_contributions(
-    gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
+    double* edot, const double* tgas, const double* rhoH,
     const double* nelec_times_mH, const double* metallicity,
     const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
     chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
@@ -289,6 +289,13 @@ void handle_dust_cooling_contributions(
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures,
     double* alpha_continuum) {
+  // Set flag for dust-related options
+
+  const gr_mask_type anydust = (my_chemistry->dust_chemistry > 0 ||
+                                my_chemistry->dust_recombination_cooling > 0)
+                                   ? MASK_TRUE
+                                   : MASK_FALSE;
+
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
 
   const double dom = internalu_calc_dom_(internalu);

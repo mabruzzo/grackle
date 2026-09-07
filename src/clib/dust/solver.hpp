@@ -111,7 +111,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// this is a helper function that handles all dust contributions pertaining
 /// to cool1d_multi_g
 ///
-/// @param[in] anydust Whether dust chemistry is enabled
 /// @param[out] edot 1D array to hold the computed the time derivative of the
 ///     internal energy in the @p idx_range. Contributions are accumulated in
 ///     this buffer. In other words, this function does **NOT** set elements to
@@ -154,7 +153,7 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// - we need to be careful with this logic to avoid making logic harder to
 ///   follow.
 void handle_dust_cooling_contributions(
-    gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
+    double* edot, const double* tgas, const double* rhoH,
     const double* nelec_times_mH, const double* metallicity,
     const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
     chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
