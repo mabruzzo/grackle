@@ -11,6 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include <algorithm>  // std::min, std::max
+#include <cstdint>
 #include <cstring>
 #include <iterator>
 #include <limits>
@@ -103,8 +104,8 @@ TEST_F(SimpleRateQueryTest, PropertyInvalidRateID) {
 
   for (grunstable_rateid_type invalid_id : invalid_ids) {
     for (enum grunstable_ratequery_prop_kind kind : prop_kinds) {
-      constexpr std::size_t BUF_LEN = 20;  // <- arbitrarily large value
-      constexpr long long DEFAULT_VAL = -25634634LL;  // <- arbitrary value
+      constexpr std::size_t BUF_LEN = 20;         // <- arbitrarily large value
+      constexpr int64_t DEFAULT_VAL = -25634634;  // <- arbitrary value
       buf.assign(BUF_LEN, DEFAULT_VAL);
       ASSERT_GR_ERR(grunstable_ratequery_prop(pack.my_rates(), invalid_id, kind,
                                               buf.data()))
@@ -189,7 +190,7 @@ TEST_P(ParametrizedRateQueryTest, Property) {
     }
     enum grunstable_types dtype = dtype_maybe.value();
 
-    long long maxitemsize = DEFAULT_VAL;
+    int64_t maxitemsize = DEFAULT_VAL;
     EXPECT_GR_SUCCESS(grunstable_ratequery_prop(
         pack.my_rates(), pair.id, GRUNSTABLE_QPROP_MAXITEMSIZE, &maxitemsize))
         << "for " << pair;
@@ -312,7 +313,7 @@ TEST_P(ParametrizedRateQueryTest, SetAndGetF64) {
       continue;
     }
 
-    long long n_items = props.n_items();
+    int64_t n_items = props.n_items();
 
     // load in data associated with the current rate
     initial_buf.assign(n_items, NAN);
@@ -321,7 +322,7 @@ TEST_P(ParametrizedRateQueryTest, SetAndGetF64) {
         << "for " << pair;
 
     // overwrite each entry with a different value
-    for (long long i = 0; i < n_items; i++) {
+    for (int64_t i = 0; i < n_items; i++) {
       initial_buf[i] = remap_value(initial_buf[i]);
     }
 
@@ -366,14 +367,14 @@ enum RateKind {
   inject_path_names
 };
 
-static long long get_n_inj_pathways(const chemistry_data* my_chemistry) {
+static int64_t get_n_inj_pathways(const chemistry_data* my_chemistry) {
   if (my_chemistry->metal_chemistry <= 0) {
     GR_INTERNAL_ERROR("there are no injection pathways");
   } else if (my_chemistry->multi_metals == 0) {
-    return 1LL;
+    return 1;
   } else {
-    return static_cast<long long>(
-        grackle::impl::inj_model_input::N_Injection_Pathways);
+    return static_cast<int64_t>(
+        GRIMPL_NS::inj_model_input::N_Injection_Pathways);
   }
 };
 
@@ -385,24 +386,23 @@ static grtest::ExpectedRateProperties RateProperties_from_RateKind(
 
   switch (kind) {
     case RateKind::scalar_f64: {
-      std::vector<long long> shape = {};  // <-- intentionally empty
+      std::vector<int64_t> shape = {};  // <-- intentionally empty
       return ExpectedRateProperties{shape, f64dtype, true};
     }
     case RateKind::simple_1d_rate: {
-      std::vector<long long> shape = {my_chemistry->NumberOfTemperatureBins};
+      std::vector<int64_t> shape = {my_chemistry->NumberOfTemperatureBins};
       return ExpectedRateProperties{shape, f64dtype, true};
     }
     case RateKind::k13dd: {
-      std::vector<long long> shape = {my_chemistry->NumberOfTemperatureBins *
-                                      14};
+      std::vector<int64_t> shape = {my_chemistry->NumberOfTemperatureBins * 14};
       return ExpectedRateProperties{shape, f64dtype, true};
     }
     case RateKind::inject_path_yield: {
-      std::vector<long long> shape = {get_n_inj_pathways(my_chemistry)};
+      std::vector<int64_t> shape = {get_n_inj_pathways(my_chemistry)};
       return ExpectedRateProperties{shape, f64dtype, true};
     }
     case RateKind::inject_path_names: {
-      std::vector<long long> shape = {get_n_inj_pathways(my_chemistry)};
+      std::vector<int64_t> shape = {get_n_inj_pathways(my_chemistry)};
       return ExpectedRateProperties{shape, strdtype, false};
     }
   }
