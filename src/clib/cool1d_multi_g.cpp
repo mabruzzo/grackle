@@ -15,15 +15,11 @@
 
 #include <vector>
 
-#include "dust/grain_species_info.hpp"
 #include "cool1d_multi_g.hpp"
-#include "dust/gas_heat_cool.hpp"
-#include "dust/multi_grain_species/dust_props.hpp"
 #include "dust/solver.hpp"
 #include "grackle.h"
 #include "internal_units.hpp"
 #include "interpolate.hpp"
-#include "inject_model/grain_metal_inject_pathways.hpp"
 #include "internal_types.hpp"
 #include "interp_grid.hpp"
 #include "opaque_storage.hpp"
@@ -218,7 +214,7 @@ void cool1d_multi_g(
   //
   // in the immediate future, the plan is to hoist this function call out of
   // cool1d_multi_g
-  handle_dust_cooling_contributions(
+  opaque_storage.dust_solver.calc_Tdust_and_chem_contrib(
       edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
       rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
       my_rates, my_fields, sp_densities, internalu, idx_range,
