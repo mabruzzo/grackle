@@ -29,7 +29,7 @@ We include a :ref:`note on compiler toolchain compatability <compiler_toolchain_
 Dependencies
 ------------
 
-In addition to C/C++ and Fortran compilers, the following dependency must 
+In addition to a C++20 compilers, the following dependency must 
 also be installed:
 
 * `HDF5 <http://www.hdfgroup.org/HDF5/>`_, the hierarchical data format.
@@ -51,6 +51,7 @@ Although many systems already have them installed, both build systems have addit
 
 * the :ref:`classic build system <classic_build>`, employs the ``makedepend`` and the `libtool <https://www.gnu.org/software/libtool/>`_ utilities.
   It's often easiest to download these dependencies through your system's package manager.
+  These build-systems also require C and Fortran compilers to be installed.
 
 .. _download_grackle:
 
@@ -680,20 +681,20 @@ As a general rule of thumb, the easiest, most reliable thing to do is  to ensure
 
 This is only something you need to consider on platforms with multiple compiler toolchains present. 
 
-In practice, toolchain-compatibility generally **ISN'T** much of a concern for Grackle, when compiled without OpenMP.
-In this scenario, you need to use Fortran compilers with consistent runtime libraries (e.g. you might encounter issues if you use ``gfortran`` to compile Grackle and ``ifort`` to compile a downstream simulation code).
-If the downstream application doesn't use any Fortran, then there generally aren't any concerns at all.
+Toolchain-compatibility is generally straight-forward when compiling without OpenMP.
+In this scenario, you need to use c++ compilers with consistent runtime libraries (e.g. you might encounter issues if you use ``g++`` to compile Grackle and ``icpx`` to compile a downstream simulation code).
+If the downstream application (and all of its other dependencies) doesn't use any C++, then there generally aren't any concerns at all.
 
 Things are slightly more complex when compiling Grackle with OpenMP.
-You need to make sure that your C compiler and Fortran compiler use a compatible OpenMP runtime.
-Usually, your best bet is to try to use C and Fortran compilers from the same vendor (e.g. using ``gcc`` with ``gfortran`` will work or using ``icc`` with ``ifort`` will work).
+You need to make sure that all of you compilers used to compile code with OpenMP use a compatible OpenMP runtime.
+When working on multilanguage projects, your best bet is to try to use compilers from the same vendor (e.g. using ``g++`` with ``gcc/gfortran`` will work or using ``icpx`` with ``icc/ifort`` will work).
 You might be able to mix compilers from different vendors by passing special compiler and linker options, but this usually isn't well documented.
 If your downstream application is also compiled with OpenMP, you also need to ensure that the downstream application is compiled with a compatible runtime.
 
 You don't generally need to worry about OpenMP-compatability between Grackle and the rest of the software stack if Grackle is compiled without OpenMP or if it is the only part of the software stack that is compiled with OpenMP.
 
 **As Grackle continues to evolve, compiler toolchain compatability will become more of an issue.**
-For example, adding GPU-support with the likes of CUDA or HIP would involve linking to a C++ runtime library.
+For example, adding GPU-support with the likes of CUDA or HIP would involve linking to the appropriate runtime library.
 
 .. note::
 
