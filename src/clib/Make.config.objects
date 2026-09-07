@@ -29,6 +29,7 @@ OBJS_CONFIG_LIB = \
         dust/calc_tdust_1d.lo \
         dust/calc_tdust_3d.lo \
         dust/grain_species_info.lo \
+        dust/solver.lo \
         dynamic_api.lo \
         api/units.lo \
         initialize_chemistry_data.lo \
