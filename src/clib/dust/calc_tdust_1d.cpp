@@ -169,6 +169,32 @@ static EqnSolveRslt unchecked_bisect(
   return EqnSolveRslt{n_unconverged == 0, iter + 1};
 }
 
+/// @brief Parameters for the positive-domain, finite difference newton method
+struct FDiffNewtonParams {
+  /// maximum number of iterations
+  int maxiter;
+
+  /// @brief the initial perturbation for computing finite differences
+  ///
+  /// A finite difference involves evaluating a function at a value ``x`` and
+  /// a value ``(1+perturb)*x``. This is the initial perturbation. The size of
+  /// the perturbation gets smaller with subsequent iterations.
+  double perturb_init;
+
+  /// @brief the minimum perturbation for computing finite differences
+  ///
+  /// @note
+  /// If the relative difference between 2 successive guesses exceeds this
+  /// value, we should probably consider the result converged
+  double perturb_min;
+
+  /// @brief convergence tolerance
+  ///
+  /// This is a somewhat atypical definition for tolerance. A guess ``x`` is
+  /// considered converged if ``|f(x)| < |tol*f(x*(1+perturb))|``
+  double tol;
+};
+
 /// @brief Find root of a function within an interval at a number of locations
 ///
 /// Use a variant of newton's method to find an array of roots for @p fn (a
@@ -176,28 +202,60 @@ static EqnSolveRslt unchecked_bisect(
 /// Derivatives are estimated via finite differences. Values associated with
 /// the function evaluation are recorded to @p associated_vals
 ///
-/// This function makes strong assumptions about the allowed range of x-values.
+/// This function assumes that the root of @p fn occurs for a positive x value.
 /// It is also designed to help the caller fall back to an alternative method
 /// (e.g. bisection) upon failure.
+///
+/// @param[in]    fn Function object representing the models the mathematical
+///    function for which roots are computed. This should have a signature
+///    of the form `FnEval fn(double x, int i)` where `i` refers to an
+///    associated array index
+/// @param[inout] x Array of initial guesses for the root. Elements are updated
+///    in place as the root is searched for.
+///    narrowed. Historically, we have called the final value in x_a the
+///    root. See the note below for additional requirements.
+/// @param[out]   associated_vals Output buffer for storing values computed
+///    while root finding.
+/// @param[inout] solvemask Array specifying a @ref SolveStatus value at each
+///    index. The solver will only look for roots at indices that initially have
+///    values of @ref SolveStatus::UNCONVERGED. Elements will be updated to hold
+///    @ref SolveStatus::CONVERGED, as convergence is achieved or to hold
+///    @ref SolveStatus::SKIP_SOLVE at locations where the guess drops below
+///    @p giveup_small_x_threshold
+/// @param[inout] f_vals, pert Scratch arrays employed by the function.
+/// @param[in]    i_start, i_stop The range of indices for which root finding
+///    is performed.
+/// @param[in]    param Carries a number of assorted configuration options
+/// @param[in]    giveup_small_x_threshold A positive value. Below this
+///    threshold, the solver gives up
+/// @param[in]    max_x The maximum x value in the domain that can be guessed
+///    as a root. Be mindful that for a guessed root of ``max_x``, a derivative
+///    will be estimated by evaluating the function with an x value that may be
+///    as large as ``max_x * (1.0 + perturb_init)``, where ``perturb_init`` is
+///    specified in the @p param argument
+///
+/// @note
+/// For an index `i`, the current implementation requires (but does not
+/// explicitly enforce) that ``giveup_small_x_threshold <= x[i]`` and
+/// ``x[i] <= max_x``. If this condition is not satisfied, then the
+/// results are undefined. The fact that these conditons aren't checked is
+/// reflected by the name of this function template.
 template <typename Fn>
-static EqnSolveRslt finite_diff_newton(const Fn& fn, double* x,
-                                       double* associated_vals, double* f_vals,
-                                       SolveStatus* solvemask, double* pert,
-                                       double minpert, int i_start, int i_stop,
-                                       double giveup_small_x_threshold,
-                                       double max_x, double rtol,
-                                       int max_iter) {
+static EqnSolveRslt unchecked_posdomain_fdiff_newton(
+    const Fn& fn, double* x, double* associated_vals, SolveStatus* solvemask,
+    double* f_vals, double* pert, int i_start, int i_stop,
+    const FDiffNewtonParams& param, double giveup_small_x_threshold,
+    double max_x) {
   int n_to_solve = 0;
 
-  double pert_i = 1.e-3;
   for (int i = i_start; i < i_stop; i++) {
     n_to_solve += solvemask[i] == SolveStatus::UNCONVERGED;
-    pert[i] = pert_i;
+    pert[i] = param.perturb_init;
   }
   // Iterate to convergence with Newton's method
   bool any_giveups = false;
   int iter;
-  for (iter = 0; (iter < max_iter) && (n_to_solve > 0); iter++) {
+  for (iter = 0; (iter < param.maxiter) && (n_to_solve > 0); iter++) {
     for (int i = i_start; i < i_stop; i++) {
       if (solvemask[i] == SolveStatus::UNCONVERGED) {
         FnEval eval_rslt = fn(x[i], i);
@@ -229,13 +287,13 @@ static EqnSolveRslt finite_diff_newton(const Fn& fn, double* x,
 
         // try to ensure next x_plus is closer to x than x_old
         pert[i] = GRIMPL_NS::clamp(0.5 * std::fabs(x[i] - x_old) / x[i],
-                                   minpert, pert[i]);
+                                   param.perturb_min, pert[i]);
 
         if (x[i] < giveup_small_x_threshold) {
           solvemask[i] = SolveStatus::SKIP_SOLVE;
           n_to_solve--;
           any_giveups = true;
-        } else if (std::fabs(f_vals[i]) < std::fabs(fplus_val * rtol)) {
+        } else if (std::fabs(f_vals[i]) < std::fabs(fplus_val * param.tol)) {
           solvemask[i] = SolveStatus::CONVERGED;
           n_to_solve--;
         }
@@ -295,11 +353,14 @@ void calc_tdust_1d_(double* tdust, const double* tgas, const double* nh,
   // the local dust-to-gas ratio, which in this work is 0.934e-2.
   const double kgr1 = 4.0e-4 / 0.00934;
 
-  const double tol = 1.e-5;
   const double bi_tol = 1.e-3;
-  const double minpert = 1.e-10;
   const int itmax = 50;
   const int bi_itmax = 30;
+
+  const FDiffNewtonParams newton_params{.maxiter = itmax,
+                                        .perturb_init = 1.e-3,
+                                        .perturb_min = 1.e-10,
+                                        .tol = 1.e-5};
 
   // Locals
 
@@ -358,10 +419,10 @@ void calc_tdust_1d_(double* tdust, const double* tgas, const double* nh,
     double* associated_vals = kgr;
     double* f_vals = sol.data();
 
-    EqnSolveRslt rslt = finite_diff_newton(
-        fn, x, associated_vals, f_vals, solvemask.data(), pert.data(), minpert,
-        idx_range.i_start, idx_range.i_stop, giveup_small_x_threshold, max_x,
-        tol, itmax);
+    EqnSolveRslt rslt = unchecked_posdomain_fdiff_newton(
+        fn, x, associated_vals, solvemask.data(), f_vals, pert.data(),
+        idx_range.i_start, idx_range.i_stop, newton_params,
+        giveup_small_x_threshold, max_x);
     iter = rslt.iterations;
     at_least_one_bisection = at_least_one_bisection || !rslt.all_solved;
   }
