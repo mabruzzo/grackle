@@ -237,6 +237,15 @@ The order of ``-D`` and ``-C`` flags matters.
 If they are both used to specify values for a given variable, the last one to appear "wins."
 More information about writing host-files are provided :ref:`below <cmake_host-files>`.
 
+.. note::
+
+   As an aside, CMake is technically a "meta-build-tool" that uses an internal generator for creating configuration files understood by external build-tools; builds are actually driven by invoking the external build-tool.
+   The above command will create configuration files under the system's default generator (commonly Makefiles).
+
+   It's worth mentioning that the `Ninja built-tool <https://ninja-build.org>`__ is a popular alternative build-backend is to use in place of Makefiles (it's usually faster).
+   If the Ninja build-tool is installed on your machine, you can append ``-GNinja`` to the above command in order to use CMake's Ninja backend.
+   Caution should be exercised when using Ninja to compile versions of Grackle before 3.5; there are well-documented bugs between Fortran and CMake's (these seem more prominent if you are using a compiler other than gfortran).
+
 
 .. _available_cmake_options:
 
@@ -318,8 +327,6 @@ With that said, we also recognize that the need may arise where a user/developer
 You can use the standardized ``CMAKE_<LANG>_FLAGS`` variables for that purpose (where ``<LANG>`` is ``C``, ``CXX``, ``Fortran``).
 For example, passing ``-DCMAKE_C_FLAGS="-Wall -Wpedantic -funroll-loops"`` will pass these flags to every invocation of the C compiler (for compiling Grackle itself as well as any examples or tests).
 Technically, these flags are passed to every invocation of the C compiler-frontend (even during linking), but that usually isn't a problem.
-
-
 
 .. _cmake_shared_and_static:
 
@@ -410,7 +417,7 @@ CMake could not find the hdf5 installation.
 If you are on a local machine (not a cluster) consider the following scenarios:
 
 * Did you remember to install hdf5?
-* If you installed hdf5 with a package manager, did you make sure that the package includes files for development?
+* If you installed hdf5 with a package manager, did you make sure that you installed the development files?
   (For example, apt commonly supports a ``libhdf5-<vers>`` package that only contains a shared library and a ``libhdf5-dev`` package that supports everything you need).
 
 If you are confident that HDF5 is installed, you can provide a hint about its location with the ``HDF5_ROOT`` cmake-configuration variable (you can also use ``HDF5_DIR``, but the semantics are a little different).
