@@ -19,8 +19,10 @@
 #include "dust/calc_all_tdust_gasgr_1d.hpp"
 #include "dust/multi_grain_species/calc_grain_size_increment_1d.hpp"
 #include "dust/multi_grain_species/dust_props.hpp"
+#include "field_adaptor.hpp"
 #include "gas_props.hpp"
 #include "grackle.h"
+#include "phys_constants.hpp"
 #include "support/index_helper.hpp"
 #include "inject_model/grain_metal_inject_pathways.hpp"
 #include "inject_model/misc.hpp"
@@ -39,7 +41,7 @@ void calc_tdust_3d(
 )
 {
 
-  const double mh_local_var = mh_grflt;
+  const double mh_local_var = constants::mH_grflt;
 
   // Set unit-related quantities
   const double dom = internalu_calc_dom_(internalu);
@@ -65,6 +67,8 @@ void calc_tdust_3d(
   {
     // each OMP thread separately initializes/allocates variables defined in
     // the current scope and then enters the for-loop
+
+    FieldAdaptorManager field_adaptor_mgr(my_fields);
 
     FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0], my_fields->grid_dimension[1], my_fields->grid_dimension[2]);
     FortranView<gr_float***> HI(my_fields->HI_density, my_fields->grid_dimension[0], my_fields->grid_dimension[1], my_fields->grid_dimension[2]);
@@ -143,6 +147,9 @@ void calc_tdust_3d(
       const int k = idx_range.k;
       const int j = idx_range.j;
 
+      SpeciesMultiView<gr_float> sp_densities
+          = field_adaptor_mgr.get_species_data(idx_range);
+
       // compute gas properties (tgas and metallicity) & fill up logTlinterp_buf
       // - compared to earlier iterations of this code path:
       //   - this computes/records a few unneeded quantities
@@ -181,7 +188,7 @@ void calc_tdust_3d(
           dom, idx_range, itmask_metal.data(), my_chemistry,
           my_rates->opaque_storage->grain_species_info,
           my_rates->opaque_storage->inject_pathway_props,
-          my_fields, internal_dust_prop_buf
+          my_fields, sp_densities, internal_dust_prop_buf
         );
 
       }

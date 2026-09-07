@@ -45,6 +45,7 @@ void grackle::impl::cool1d_multi_g(
     const double* nelec_times_mH, const gr_mask_type* itmask,
     const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
     chemistry_data_storage* my_rates, grackle_field_data* my_fields,
+    SpeciesMultiView<const gr_float> sp_densities,
     photo_rate_storage my_uvb_rates, InternalGrUnits internalu,
     IndexRange idx_range,
     grackle::impl::GrainSpeciesCollection grain_temperatures,
@@ -119,7 +120,7 @@ void grackle::impl::cool1d_multi_g(
       my_fields->grid_dimension[1], my_fields->grid_dimension[2]);
 
   // Declare some constants:
-  const double mh_local_var = mh_grflt;
+  const double mh_local_var = constants::mH_grflt;
 
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
 
@@ -257,7 +258,8 @@ void grackle::impl::cool1d_multi_g(
       logT[i] = std::log10(tgas[i]);
       if (my_chemistry->cmb_temperature_floor == 1)
         logTcmb[i] = std::log10(comp2);
-      logrho[i] = std::log10(d(i, idx_range.j, idx_range.k) * dom * mh);
+      logrho[i] =
+          std::log10(d(i, idx_range.j, idx_range.k) * dom * constants::mH);
       if (my_chemistry->primordial_chemistry > 0) {
         logH[i] = std::log10(HI(i, idx_range.j, idx_range.k) * dom);
         logH2[i] = std::log10(HI(i, idx_range.j, idx_range.k) * dom);
@@ -284,10 +286,11 @@ void grackle::impl::cool1d_multi_g(
 
       // From Chiaki & Wise (2019), approximate dv/dr as 1/(3 * t_ff)
       logdvdr[i] = -8.79947961814e0 + 0.5e0 * logrho[i];  // km/s / cm
-      lshield_con[i] = std::sqrt(
-          (my_chemistry->Gamma * pi_fortran_val * kboltz_grflt * tgas[i]) /
-          (GravConst_grflt * mmw[i] * mh_local_var *
-           d(i, idx_range.j, idx_range.k) * dom * mh_local_var));
+      lshield_con[i] =
+          std::sqrt((my_chemistry->Gamma * constants::pi_fortran_val *
+                     constants::kboltz_grflt * tgas[i]) /
+                    (constants::GravConst_grflt * mmw[i] * mh_local_var *
+                     d(i, idx_range.j, idx_range.k) * dom * mh_local_var));
     }
   }
 
@@ -812,12 +815,12 @@ void grackle::impl::cool1d_multi_g(
     }
   }
 
-  dust_related_props(anydust, tgas, cool1dmulti_buf.mynh, metallicity, itmask,
-                     itmask_metal, my_chemistry, my_rates, my_fields, internalu,
-                     idx_range, logTlininterp_buf, comp2, dust2gas, tdust,
-                     grain_temperatures, gasgr.data(), gas_grainsp_heatrate,
-                     kappa_tot.data(), grain_kappa, cool1dmulti_buf.gasgr_tdust,
-                     myisrf.data(), internal_dust_prop_buf);
+  dust_related_props(
+      anydust, tgas, cool1dmulti_buf.mynh, metallicity, itmask, itmask_metal,
+      my_chemistry, my_rates, my_fields, sp_densities, internalu, idx_range,
+      logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
+      gasgr.data(), gas_grainsp_heatrate, kappa_tot.data(), grain_kappa,
+      cool1dmulti_buf.gasgr_tdust, myisrf.data(), internal_dust_prop_buf);
 
   // Calculate dust cooling rate
   if (anydust != MASK_FALSE) {

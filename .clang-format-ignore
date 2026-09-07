@@ -11,9 +11,7 @@
 
 src/clib/api/calculate_cooling_time.cpp
 src/clib/api/calculate_dust_temperature.cpp
-src/clib/api/calculate_gamma.cpp
-src/clib/api/calculate_pressure.cpp
-src/clib/api/calculate_temperature.cpp
+src/clib/api/calculate_T_related.cpp
 src/clib/api/set_default_chemistry_parameters.cpp
 src/clib/api/solve_chemistry.cpp
 src/clib/api/units.cpp
@@ -34,7 +32,7 @@ src/clib/initialize_dust_yields.cpp
 src/clib/initialize_rates.cpp
 src/clib/internal_types.hpp
 src/clib/internal_units.hpp
-src/clib/phys_constants.h
+src/clib/interpolate.hpp
 src/clib/rate_functions.cpp
 src/clib/solve_rate_cool.cpp
 src/clib/support/status_reporting.cpp
