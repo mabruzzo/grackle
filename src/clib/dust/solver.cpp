@@ -14,6 +14,7 @@
 
 #include "grackle.h"
 #include "dust/grain_species_info.hpp"
+#include "dust/misc.hpp"
 #include "dust/multi_grain_species/calc_grain_size_increment_1d.hpp"
 #include "dust/solver.hpp"
 #include "field_adaptor.hpp"
@@ -274,6 +275,26 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
       }  // n_grain_species loop
     }
   }
+}
+
+void handle_dust_cooling_contributions(
+    gr_mask_type anydust, const double* tgas, double* nH,
+    const double* metallicity, const gr_mask_type* itmask,
+    const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
+    chemistry_data_storage* my_rates, grackle_field_data* my_fields,
+    const SpeciesMultiView<const gr_float> sp_densities,
+    InternalGrUnits internalu, IndexRange idx_range,
+    LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
+    double* tdust, GrainSpeciesCollection grain_temperatures, double* gasgr,
+    GrainSpeciesCollection gas_grainsp_heatrate, double* kappa_tot,
+    GrainSpeciesCollection grain_kappa, double* gasgr_tdust, double* myisrf,
+    InternalDustPropBuf internal_dust_prop_buf) {
+  // compute various dust properties
+  dust_related_props(anydust, tgas, nH, metallicity, itmask, itmask_metal,
+                     my_chemistry, my_rates, my_fields, sp_densities, internalu,
+                     idx_range, logTlininterp_buf, rad_T, dust2gas, tdust,
+                     grain_temperatures, gasgr, gas_grainsp_heatrate, kappa_tot,
+                     grain_kappa, gasgr_tdust, myisrf, internal_dust_prop_buf);
 }
 
 }  // namespace GRIMPL_NAMESPACE_DECL

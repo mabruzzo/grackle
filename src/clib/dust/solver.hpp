@@ -16,6 +16,7 @@
 #include "../field_adaptor.hpp"
 #include "../full_rxn_rate_buf.hpp"
 #include "../internal_types.hpp"
+#include "../internal_units.hpp"
 #include "../lnT_prep.hpp"
 #include "./multi_grain_species/dust_props.hpp"
 #include "../support/config.hpp"
@@ -106,6 +107,68 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
                          LnTLinInterpBuf logTlininterp_buf,
                          FullRxnRateBuf rxn_rate_buf,
                          InternalDustPropBuf internal_dust_prop_scratch_buf);
+
+/// this is a helper function that handles all dust contributions pertaining
+/// to cool1d_multi_g
+///
+/// At the moment, we are gradually shifting functionality into this function
+/// (it does not yet handle dust edot contributions or adding to the continuum
+/// opacity)
+///
+/// @param[in] anydust Whether dust chemistry is enabled
+/// @param[in] tgas 1d array of gas temperature
+/// @param[in] nH 1d array of Hydrogen number densities
+/// @param[in] metallicity 1d array of metallicities
+/// @param[in] itmask Specifies the general iteration-mask of the @p idx_range
+///     for this calculation.
+/// @param[in] itmask_metal Specifies the metal/dust-specific iteration-mask of
+///     the @p idx_range for this calculation.
+/// @param[in] my_chemistry holds a number of configuration parameters.
+/// @param[in] my_rates Holds assorted rate data and other internal
+///     configuration info.
+/// @param[in] my_fields Specifies the field data.
+/// @param[in] sp_densities Specifies the densities of the various species
+///     that Grackle evolves (if any) in a format that allows the values to be
+///     accessed with the index lookup table. Wherever possible, data should be
+///     be accessed through this argument, rather than with @p my_fields
+/// @param[in] internalu Specifies Grackle's internal unit-system
+/// @param[in] idx_range Specifies the current index-range
+/// @param[in] logTlininterp_buf hold values for each location in @p idx_range
+///     that are used to linearly interpolate tables with respect to the
+///     natural log of @p tgas.
+/// @param[in] trad Holds the CMB temperature at the current redshift
+/// @param[out] dust2gas Holds the computed dust-to-gas ratio at each
+///     location in the index range. In other words, this holds the dust mass
+///     per unit gas mass (only used in certain configuration)
+/// @param[out] tdust, grain_temperatures dust temperatures may be written
+///     to one of these variables, based on configuration
+/// @param[out] gasgr, gas_grainsp_heatrate Grain/gas energy transfer rates may
+///     be written to one of these variables, based on configuration
+/// @param[out] kappa_tot, grain_kappa Opacity-related information may be
+///     written to one of these variables, based on configuration
+/// @param[in,out] gasgr_tdust A 1D array of that acts as a scratch buffer
+///     (with some refactoring, this can probably be removed)
+/// @param[in,out] myisrf a scratch buffer that may be used to temporarily
+///     record the interstellar radiation field
+/// @param[in,out] internal_dust_prop_buf Holds scratch-space for holding
+///     grain-specific information
+///
+/// @note
+/// In some sense, this is a step towards factoring out all of the dust logic.
+/// - we need to be careful with this logic to avoid making logic harder to
+///   follow.
+void handle_dust_cooling_contributions(
+    gr_mask_type anydust, const double* tgas, double* nH,
+    const double* metallicity, const gr_mask_type* itmask,
+    const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
+    chemistry_data_storage* my_rates, grackle_field_data* my_fields,
+    const SpeciesMultiView<const gr_float> sp_densities,
+    InternalGrUnits internalu, IndexRange idx_range,
+    LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
+    double* tdust, GrainSpeciesCollection grain_temperatures, double* gasgr,
+    GrainSpeciesCollection gas_grainsp_heatrate, double* kappa_tot,
+    GrainSpeciesCollection grain_kappa, double* gasgr_tdust, double* myisrf,
+    InternalDustPropBuf internal_dust_prop_buf);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 

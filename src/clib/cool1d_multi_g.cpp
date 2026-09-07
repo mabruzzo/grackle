@@ -18,8 +18,8 @@
 #include "dust/grain_species_info.hpp"
 #include "cool1d_multi_g.hpp"
 #include "dust/gas_heat_cool.hpp"
-#include "dust/misc.hpp"
 #include "dust/multi_grain_species/dust_props.hpp"
+#include "dust/solver.hpp"
 #include "grackle.h"
 #include "interpolate.hpp"
 #include "inject_model/grain_metal_inject_pathways.hpp"
@@ -820,7 +820,7 @@ void cool1d_multi_g(
     }
   }
 
-  dust_related_props(
+  handle_dust_cooling_contributions(
       anydust, tgas, cool1dmulti_buf.mynh, metallicity, itmask, itmask_metal,
       my_chemistry, my_rates, my_fields, sp_densities, internalu, idx_range,
       logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
