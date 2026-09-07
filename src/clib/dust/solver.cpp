@@ -279,16 +279,15 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 }
 
 void handle_dust_cooling_contributions(
-    double* edot, const double* tgas, const double* rhoH,
-    const double* nelec_times_mH, const double* metallicity,
-    const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
-    chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
-    grackle_field_data* my_fields,
+    double* edot, double* dust2gas, double* tdust,
+    GrainSpeciesCollection grain_temperatures, double* alpha_continuum,
+    const double* tgas, const double* rhoH, const double* nelec_times_mH,
+    const double* metallicity, const gr_mask_type* itmask,
+    const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
+    chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
-    LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
-    double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* alpha_continuum) {
+    LnTLinInterpBuf logTlininterp_buf, double rad_T) {
   // Set flag for dust-related options
 
   const gr_mask_type anydust = (my_chemistry->dust_chemistry > 0 ||

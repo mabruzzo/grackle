@@ -778,10 +778,10 @@ void cool1d_multi_g(
   }
 
   handle_dust_cooling_contributions(
-      edot, tgas, rhoH, nelec_times_mH, metallicity, itmask, itmask_metal,
-      my_chemistry, my_rates, my_fields, sp_densities, internalu, idx_range,
-      logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
-      alpha_continuum.data());
+      edot, dust2gas, tdust, grain_temperatures, alpha_continuum.data(), tgas,
+      rhoH, nelec_times_mH, metallicity, itmask, itmask_metal, my_chemistry,
+      my_rates, my_fields, sp_densities, internalu, idx_range,
+      logTlininterp_buf, comp2);
 
   // --- Compute (external) radiative heating terms ---
   // Photoionization heating

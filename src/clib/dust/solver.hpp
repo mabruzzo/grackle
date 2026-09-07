@@ -115,6 +115,15 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     internal energy in the @p idx_range. Contributions are accumulated in
 ///     this buffer. In other words, this function does **NOT** set elements to
 ///     to 0 before adding contributions.
+/// @param[out] dust2gas Holds the computed dust-to-gas ratio at each
+///     location in the index range. In other words, this holds the dust mass
+///     per unit gas mass (only used in certain configuration)
+/// @param[out] tdust, grain_temperatures dust temperatures may be written
+///     to one of these variables, based on configuration
+/// @param[out] alpha_continuum buffer to which linear absorption
+///     coefficients from dust are added (each element is updated in place with
+///     the sum of its existing value and the contribution from dust). In
+///     certain configurations this is not actually updated.
 /// @param[in] tgas 1d array of gas temperature
 /// @param[in] rhoH 1D array of Hydrogen mass densities for the @p idx_range
 /// @param[in] nelec_times_mH 1D array holding the number density of electrons
@@ -138,31 +147,21 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     that are used to linearly interpolate tables with respect to the
 ///     natural log of @p tgas.
 /// @param[in] trad Holds the CMB temperature at the current redshift
-/// @param[out] dust2gas Holds the computed dust-to-gas ratio at each
-///     location in the index range. In other words, this holds the dust mass
-///     per unit gas mass (only used in certain configuration)
-/// @param[out] tdust, grain_temperatures dust temperatures may be written
-///     to one of these variables, based on configuration
-/// @param[out] alpha_continuum buffer to which linear absorption
-///     coefficients from dust are added (each element is updated in place with
-///     the sum of its existing value and the contribution from dust). In
-///     certain configurations this is not actually updated.
 ///
 /// @note
 /// In some sense, this is a step towards factoring out all of the dust logic.
 /// - we need to be careful with this logic to avoid making logic harder to
 ///   follow.
 void handle_dust_cooling_contributions(
-    double* edot, const double* tgas, const double* rhoH,
-    const double* nelec_times_mH, const double* metallicity,
-    const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
-    chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
-    grackle_field_data* my_fields,
+    double* edot, double* dust2gas, double* tdust,
+    GrainSpeciesCollection grain_temperatures, double* alpha_continuum,
+    const double* tgas, const double* rhoH, const double* nelec_times_mH,
+    const double* metallicity, const gr_mask_type* itmask,
+    const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
+    chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
     InternalGrUnits internalu, IndexRange idx_range,
-    LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
-    double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* alpha_continuum);
+    LnTLinInterpBuf logTlininterp_buf, double rad_T);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 
