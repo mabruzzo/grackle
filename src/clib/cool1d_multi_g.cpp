@@ -221,18 +221,6 @@ void cool1d_multi_g(
     alpha_continuum[i] = 0.0;
   }
 
-  // Calculate H number density
-  // TODO: get rid of this buffer
-  // -> the difference between accessing cool1dmulti_buf.mynh and recomputing
-  //    the value each time we need it is very small.
-  // -> Getting rid of the buffer reduces cache complexity and simplifies logic
-
-  for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
-    if (itmask[i] != MASK_FALSE) {
-      cool1dmulti_buf.mynh[i] = rhoH[i] * dom;
-    }
-  }
-
   // Compute log densities
 
   for (i = idx_range.i_start; i <= idx_range.i_end; i++) {
@@ -798,10 +786,9 @@ void cool1d_multi_g(
   }
 
   handle_dust_cooling_contributions(
-      anydust, edot, tgas, rhoH, nelec_times_mH, cool1dmulti_buf.mynh,
-      metallicity, itmask, itmask_metal, my_chemistry, my_rates, my_fields,
-      sp_densities, internalu, idx_range, logTlininterp_buf, comp2, dust2gas,
-      tdust, grain_temperatures, cool1dmulti_buf.gasgr_tdust,
+      anydust, edot, tgas, rhoH, nelec_times_mH, metallicity, itmask,
+      itmask_metal, my_chemistry, my_rates, my_fields, sp_densities, internalu,
+      idx_range, logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
       alpha_continuum.data());
 
   // --- Compute (external) radiative heating terms ---

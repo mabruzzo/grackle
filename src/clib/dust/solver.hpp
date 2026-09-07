@@ -120,7 +120,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// @param[in] rhoH 1D array of Hydrogen mass densities for the @p idx_range
 /// @param[in] nelec_times_mH 1D array holding the number density of electrons
 ///     (multiplied by the Hydrogen mass) for the @p idx_range
-/// @param[in] nH 1d array of Hydrogen number densities
 /// @param[in] metallicity 1d array of metallicities
 /// @param[in] itmask Specifies the general iteration-mask of the @p idx_range
 ///     for this calculation.
@@ -145,8 +144,6 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///     per unit gas mass (only used in certain configuration)
 /// @param[out] tdust, grain_temperatures dust temperatures may be written
 ///     to one of these variables, based on configuration
-/// @param[in,out] gasgr_tdust A 1D array of that acts as a scratch buffer
-///     (with some refactoring, this can probably be removed)
 /// @param[out] alpha_continuum buffer to which linear absorption
 ///     coefficients from dust are added (each element is updated in place with
 ///     the sum of its existing value and the contribution from dust). In
@@ -158,7 +155,7 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 ///   follow.
 void handle_dust_cooling_contributions(
     gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
-    const double* nelec_times_mH, double* nH, const double* metallicity,
+    const double* nelec_times_mH, const double* metallicity,
     const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
     chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
     grackle_field_data* my_fields,
@@ -166,7 +163,7 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* gasgr_tdust, double* alpha_continuum);
+    double* alpha_continuum);
 
 }  // namespace GRIMPL_NAMESPACE_DECL
 

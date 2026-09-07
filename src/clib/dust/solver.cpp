@@ -280,7 +280,7 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 
 void handle_dust_cooling_contributions(
     gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
-    const double* nelec_times_mH, double* nH, const double* metallicity,
+    const double* nelec_times_mH, const double* metallicity,
     const gr_mask_type* itmask, const gr_mask_type* itmask_metal,
     chemistry_data* my_chemistry, chemistry_data_storage* my_rates,
     grackle_field_data* my_fields,
@@ -288,7 +288,7 @@ void handle_dust_cooling_contributions(
     InternalGrUnits internalu, IndexRange idx_range,
     LnTLinInterpBuf logTlininterp_buf, double rad_T, double* dust2gas,
     double* tdust, GrainSpeciesCollection grain_temperatures,
-    double* gasgr_tdust, double* alpha_continuum) {
+    double* alpha_continuum) {
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
 
   const double dom = internalu_calc_dom_(internalu);
@@ -321,13 +321,29 @@ void handle_dust_cooling_contributions(
   // holds values of the interstellar radiation field
   std::vector<double> myisrf(my_fields->grid_dimension[0]);
 
+  // 1d array of Hydrogen number densities
+  // TODO: get rid of this buffer
+  // -> accessing this buffer vs recomputing the value each time has a very
+  //    small impact on rruntime
+  // -> Getting rid of the buffer reduces cache complexity and simplifies logic
+  //    (in fact, its plausible that getting rid of this could speed things up)
+  std::vector<double> nH(my_fields->grid_dimension[0]);
+  for (int i = idx_range.i_start; i < idx_range.i_stop; i++) {
+    if (itmask[i] != MASK_FALSE) {
+      nH[i] = rhoH[i] * dom;
+    }
+  }
+
+  // a scratch buffer (with some refactoring, this can probably be removed)
+  std::vector<double> gasgr_tdust(my_fields->grid_dimension[0]);
+
   // compute various dust properties
-  dust_related_props(anydust, tgas, nH, metallicity, itmask, itmask_metal,
-                     my_chemistry, my_rates, my_fields, sp_densities, internalu,
-                     idx_range, logTlininterp_buf, rad_T, dust2gas, tdust,
-                     grain_temperatures, gasgr.data(), gas_grainsp_heatrate,
-                     kappa_tot.data(), grain_kappa, gasgr_tdust, myisrf.data(),
-                     internal_dust_prop_buf);
+  dust_related_props(anydust, tgas, nH.data(), metallicity, itmask,
+                     itmask_metal, my_chemistry, my_rates, my_fields,
+                     sp_densities, internalu, idx_range, logTlininterp_buf,
+                     rad_T, dust2gas, tdust, grain_temperatures, gasgr.data(),
+                     gas_grainsp_heatrate, kappa_tot.data(), grain_kappa,
+                     gasgr_tdust.data(), myisrf.data(), internal_dust_prop_buf);
 
   // Add contributions from dust opacity to alpha_continuum, the continuum
   // linear absorption coefficient
