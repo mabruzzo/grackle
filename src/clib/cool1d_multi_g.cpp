@@ -813,18 +813,11 @@ void cool1d_multi_g(
   }
 
   handle_dust_cooling_contributions(
-      anydust, tgas, cool1dmulti_buf.mynh, metallicity, itmask, itmask_metal,
-      my_chemistry, my_rates, my_fields, sp_densities, internalu, idx_range,
-      logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
+      anydust, edot, tgas, rhoH, cool1dmulti_buf.mynh, metallicity, itmask,
+      itmask_metal, my_chemistry, my_rates, my_fields, sp_densities, internalu,
+      idx_range, logTlininterp_buf, comp2, dust2gas, tdust, grain_temperatures,
       gasgr.data(), gas_grainsp_heatrate, cool1dmulti_buf.gasgr_tdust,
       myisrf.data(), internal_dust_prop_buf, alpha_continuum.data());
-
-  // Calculate dust cooling rate
-  if (anydust != MASK_FALSE) {
-    dust_gas_edot::update_edot_dust_cooling_rate(
-        edot, tgas, tdust, grain_temperatures, dust2gas, rhoH, itmask_metal,
-        my_chemistry, idx_range, d, gasgr.data(), gas_grainsp_heatrate);
-  }
 
   // --- Compute (external) radiative heating terms ---
   // Photoionization heating

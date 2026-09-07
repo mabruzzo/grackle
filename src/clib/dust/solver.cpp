@@ -13,6 +13,7 @@
 #include <cfloat>  // DBL_MAX
 
 #include "grackle.h"
+#include "dust/gas_heat_cool.hpp"
 #include "dust/grain_species_info.hpp"
 #include "dust/misc.hpp"
 #include "dust/multi_grain_species/calc_grain_size_increment_1d.hpp"
@@ -278,8 +279,8 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 }
 
 void handle_dust_cooling_contributions(
-    gr_mask_type anydust, const double* tgas, double* nH,
-    const double* metallicity, const gr_mask_type* itmask,
+    gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
+    double* nH, const double* metallicity, const gr_mask_type* itmask,
     const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
     chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
@@ -290,6 +291,10 @@ void handle_dust_cooling_contributions(
     double* myisrf, InternalDustPropBuf internal_dust_prop_buf,
     double* alpha_continuum) {
   const bool single_species_dust_model = my_chemistry->dust_chemistry == 1;
+
+  FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
+                             my_fields->grid_dimension[1],
+                             my_fields->grid_dimension[2]);
 
   // opacity coefficients for each dust grain (the product of opacity
   // coefficient & gas mass density is the linear absortpion coefficient)
@@ -316,10 +321,6 @@ void handle_dust_cooling_contributions(
   // I think this comment explains why we aren't including dust contributions
   // in the classic single-species dust model
   if ((anydust != MASK_FALSE) && (my_chemistry->dust_species > 0)) {
-    FortranView<gr_float***> d(my_fields->density, my_fields->grid_dimension[0],
-                               my_fields->grid_dimension[1],
-                               my_fields->grid_dimension[2]);
-
     const double mh_local_var = constants::mH_grflt;
     const double dom = internalu_calc_dom_(internalu);
     int n_grain_species =
@@ -339,6 +340,13 @@ void handle_dust_cooling_contributions(
             kappa_sum * d(i, idx_range.j, idx_range.k) * dom * mh_local_var;
       }
     }
+  }
+
+  // Calculate dust cooling rate
+  if (anydust != MASK_FALSE) {
+    dust_gas_edot::update_edot_dust_cooling_rate(
+        edot, tgas, tdust, grain_temperatures, dust2gas, rhoH, itmask_metal,
+        my_chemistry, idx_range, d, gasgr, gas_grainsp_heatrate);
   }
 
   drop_GrainSpeciesCollection(&grain_kappa);

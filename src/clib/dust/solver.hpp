@@ -115,7 +115,12 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// (it does not yet handle dust edot contributions)
 ///
 /// @param[in] anydust Whether dust chemistry is enabled
+/// @param[out] edot 1D array to hold the computed the time derivative of the
+///     internal energy in the @p idx_range. Contributions are accumulated in
+///     this buffer. In other words, this function does **NOT** set elements to
+///     to 0 before adding contributions.
 /// @param[in] tgas 1d array of gas temperature
+/// @param[in] rhoH 1D array of Hydrogen mass densities for the @p idx_range
 /// @param[in] nH 1d array of Hydrogen number densities
 /// @param[in] metallicity 1d array of metallicities
 /// @param[in] itmask Specifies the general iteration-mask of the @p idx_range
@@ -159,8 +164,8 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
 /// - we need to be careful with this logic to avoid making logic harder to
 ///   follow.
 void handle_dust_cooling_contributions(
-    gr_mask_type anydust, const double* tgas, double* nH,
-    const double* metallicity, const gr_mask_type* itmask,
+    gr_mask_type anydust, double* edot, const double* tgas, const double* rhoH,
+    double* nH, const double* metallicity, const gr_mask_type* itmask,
     const gr_mask_type* itmask_metal, chemistry_data* my_chemistry,
     chemistry_data_storage* my_rates, grackle_field_data* my_fields,
     const SpeciesMultiView<const gr_float> sp_densities,
