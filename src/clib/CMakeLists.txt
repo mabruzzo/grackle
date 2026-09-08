@@ -61,8 +61,7 @@ query_version(git-revision GIT_REVISION)
 # in the original build-system, the following string also included things like:
 # include-args, linking flags, macro definitions, all other compiler flags...
 string(REPLACE "\n" "\\n" SHOW_FLAGS_STR "
-  CC = ${CMAKE_C_COMPILER}
-  FC = ${CMAKE_Fortran_COMPILER}
+  CXX = ${CMAKE_CXX_COMPILER}
   LD = ${CMAKE_LINKER}
 ")
 
@@ -94,6 +93,7 @@ add_library(Grackle_Grackle
   api/solve_chemistry.cpp
   api/units.cpp
   ceiling_species.hpp
+  chem_model/nuclide_model.cpp chem_model/nuclide_model.hpp
   cie_thin_cooling_rate_tables.hpp
   collisional_rate_props.cpp collisional_rate_props.hpp
   cool1d_multi_g.cpp cool1d_multi_g.hpp
@@ -112,7 +112,6 @@ add_library(Grackle_Grackle
   dust/solver.cpp dust/solver.hpp
   dynamic_api.cpp
   field_adaptor.hpp
-  fortran_func_wrappers.hpp
   full_rxn_rate_buf.hpp
   gas_props.hpp
   init_misc_species_cool_rates.cpp init_misc_species_cool_rates.hpp
@@ -194,13 +193,10 @@ add_library(Grackle_Grackle
   grackle_macros.h
   collisional_rxn_rate_members.def # <-- acts as a C header
 
-  # Fortran public headers
+  # Fortran public interface headers
   ../include/grackle.def
   ../include/grackle_fortran_interface.def
   ../include/grackle_fortran_types.def
-
-  # Fortran private headers
-  phys_const.def
 )
 
 target_compile_features(Grackle_Grackle PRIVATE cxx_std_20)
@@ -277,17 +273,8 @@ target_include_directories(Grackle_Grackle
 )
 
 target_link_libraries(Grackle_Grackle
-  PRIVATE toolchain::m
-          GRACKLE_HDF5_C
-          $<$<BOOL:${GRACKLE_USE_OPENMP}>:OpenMP::OpenMP_Fortran>
-          $<$<BOOL:${GRACKLE_USE_OPENMP}>:OpenMP::OpenMP_C>
+  PRIVATE GRACKLE_HDF5_C $<$<BOOL:${GRACKLE_USE_OPENMP}>:OpenMP::OpenMP_CXX>
 )
-
-# add the necessary compiler-specific Fortran flags to ensure proper handling
-# of our specific Fortran-dialect and that name mangling is performed as
-# expected (these flags only get applied to Fortran source-code files)
-include(AddConditionalFortranFlags)
-add_conditional_fortran_flags(Grackle_Grackle)
 
 # add the machine-specific compiler optimization options (generally specified
 # in host-files) for use in the  RELEASE or RELWITHDEBINFO build-configurations
@@ -304,12 +291,6 @@ add_conditional_fortran_flags(Grackle_Grackle)
 target_compile_options(Grackle_Grackle PRIVATE
   "$<$<CONFIG:RELEASE>:${GRACKLE_OPTIMIZATION_FLIST}>"
   "$<$<CONFIG:RELWITHDEBINFO>:${GRACKLE_OPTIMIZATION_FLIST}>")
-
-# define macros so that the C files know how to properly handle name-mangling
-# (if cmake were our only build-system, we could use FortranCInterface module)
-if ("${CMAKE_SYSTEM_NAME}" MATCHES "^(Linux)|(Darwin)$")
-  target_compile_definitions(Grackle_Grackle PRIVATE "LINUX")
-endif()
 
 # define macro to slightly customize behavior in header files since we're compiling
 # the grackle library

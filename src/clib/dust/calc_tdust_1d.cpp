@@ -20,8 +20,6 @@
 #include "dust/passive/analytic_opac.hpp"
 #include "grackle.h"
 #include "fortran_func_decls.h"
-// TODO: to be removed when transcription is done
-#include "fortran_func_wrappers.hpp"
 #include "phys_constants.hpp"
 #include "support/config.hpp"
 #include "utils-cpp.hpp"
