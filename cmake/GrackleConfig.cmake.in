@@ -318,14 +318,29 @@ if (${_GRACKLE_LIBKIND} STREQUAL "static")
     unset(_GRACKLE_OpenMP_LIBS)
   endif()
 
-  # _GRACKLE_TOOLCHAIN_LINK_LIBS holds (toolchain-specific) runtime libs. The
-  # idea here is to ensure that a static Grackle library can be properly linked
-  # against pure-C projects
-  set(_GRACKLE_TOOLCHAIN_LINK_LIBS "@_TOOLCHAIN_LINK_LIBS@")
 
   add_library(GRACKLE_TOOLCHAIN_RUNTIME_DEPS INTERFACE IMPORTED)
-  set_target_properties(GRACKLE_TOOLCHAIN_RUNTIME_DEPS PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${_GRACKLE_TOOLCHAIN_LINK_LIBS}")
+  get_property(_GR_ENABLED_LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
+
+  # if we add HIP/CUDA support, the following check is going to need to change
+  if (NOT ("CXX" IN_LIST _GR_ENABLED_LANGUAGES))
+    message(WARNING [=[
+Projects using Grackle as a static library are STRONGLY encouraged to either
+add CXX to the language list specified in the top-level project command OR call
+enable_language(CXX) before searching for the library.
+  Currently falling back to a best-effort inference of implicit dependencies
+  Fall-back approach may not be possible in the future (with GPU acceleration)
+]=])
+
+    # _GRACKLE_TOOLCHAIN_LINK_LIBS holds (toolchain-specific) runtime libs. The
+    # idea here is to attempt to support linking of a project configured
+    # without a C++ toolchain against a static Grackle library
+    set(_GRACKLE_TOOLCHAIN_LINK_LIBS "@_TOOLCHAIN_LINK_LIBS@")
+    set_target_properties(GRACKLE_TOOLCHAIN_RUNTIME_DEPS PROPERTIES
+      INTERFACE_LINK_LIBRARIES "${_GRACKLE_TOOLCHAIN_LINK_LIBS}")
+    unset(_GRACKLE_TOOLCHAIN_LINK_LIBS)
+  endif()
+  unset(_GR_ENABLED_LANGUAGES)
 
 endif()
 
