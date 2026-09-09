@@ -191,11 +191,6 @@ extern "C" int local_initialize_chemistry_data(
       return GR_FAIL;
     }
 
-    if (my_chemistry->metal_chemistry < 1) {
-      fprintf(stderr, "ERROR: dust_chemistry > 0 requires metal_chemistry > 0.\n");
-      return GR_FAIL;
-    }
-
     if (my_chemistry->photoelectric_heating < 0) {
       my_chemistry->photoelectric_heating = 2;
       if (grackle_verbose) {
@@ -233,6 +228,11 @@ extern "C" int local_initialize_chemistry_data(
 
     if (my_chemistry->use_dust_density_field == 1) {
       fprintf(stderr, "ERROR: dust_chemistry = 2 requires use_dust_density_field = 0.\n");
+      return GR_FAIL;
+    }
+
+    if (my_chemistry->metal_chemistry < 1) {
+      fprintf(stderr, "ERROR: dust_chemistry = 2 requires metal_chemistry > 0.\n");
       return GR_FAIL;
     }
   }
