@@ -122,12 +122,12 @@ inline void dust_related_props(
       }
 
       const GrainSpeciesInfo* grain_species_info =
-        my_rates->opaque_storage->grain_species_info;
+          my_rates->opaque_storage->grain_species_info;
       for (int grsp_i = 0; grsp_i < grain_species_info->n_species(); grsp_i++) {
         const GrainSpeciesInfoEntry& cur_grsp_info =
-          grain_species_info->species_info()[grsp_i];
+            grain_species_info->species_info()[grsp_i];
         const gr_float* grsp_density =
-          sp_densities.contig1d_ptr(cur_grsp_info.species_idx);
+            sp_densities.contig1d_ptr(cur_grsp_info.species_idx);
         FortranView<const gr_float***> grsp_d(
             grsp_density, my_fields->grid_dimension[0],
             my_fields->grid_dimension[1], my_fields->grid_dimension[2]);
@@ -140,8 +140,7 @@ inline void dust_related_props(
       for (int i = idx_range.i_start; i <= idx_range.i_end; i++) {
         dust2gas[i] /= d(i, idx_range.j, idx_range.k);
       }
-    }
-    else if (my_chemistry->use_dust_density_field == 1) {
+    } else if (my_chemistry->use_dust_density_field == 1) {
       for (int i = idx_range.i_start; i <= idx_range.i_end; i++) {
         // REMINDER: use of `itmask` over `itmask_metal` is
         //   currently required by Photo-electric heating
