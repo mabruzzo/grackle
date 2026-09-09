@@ -212,7 +212,6 @@ c     This is the fortran definition of grackle_chemistry_data
          INTEGER(C_INT) :: use_primordial_continuum_opacity
          INTEGER(C_INT) :: hd_reaction_rates
          INTEGER(C_INT) :: gas_grain_cooling_rate
-         INTEGER(C_INT) :: uniform_grain_isrf_heating_rate
          INTEGER(C_INT) :: max_iterations
          INTEGER(C_INT) :: exit_after_iterations_exceeded
 cc       INTEGER(C_INT) :: omp_nthreads // not supported in fortran

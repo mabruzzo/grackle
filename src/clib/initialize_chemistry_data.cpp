@@ -230,6 +230,11 @@ extern "C" int local_initialize_chemistry_data(
       fprintf(stderr, "ERROR: dust_chemistry = 2 requires use_dust_density_field = 0.\n");
       return GR_FAIL;
     }
+
+    if (my_chemistry->metal_chemistry < 1) {
+      fprintf(stderr, "ERROR: dust_chemistry = 2 requires metal_chemistry > 0.\n");
+      return GR_FAIL;
+    }
   }
 
   if (my_chemistry->metal_chemistry == 1) {
