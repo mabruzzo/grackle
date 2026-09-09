@@ -131,9 +131,6 @@ typedef struct
   */
   int dust_species;
 
-  /* Flag to solve temperatures of multiple grain species */
-  int use_multiple_dust_temperatures;
-
   /* photo-electric heating from irradiated dust */
   int photoelectric_heating;
   double photoelectric_heating_rate;
