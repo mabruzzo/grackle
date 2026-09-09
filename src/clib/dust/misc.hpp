@@ -115,7 +115,7 @@ inline void dust_related_props(
         my_fields->dust_density, my_fields->grid_dimension[0],
         my_fields->grid_dimension[1], my_fields->grid_dimension[2]);
 
-    if (my_chemistry->dust_species > 0) {
+    if (my_chemistry->dust_chemistry == 2) {
       // Add up all dust mass densities
       for (int i = idx_range.i_start; i <= idx_range.i_end; i++) {
         dust2gas[i] = 0.0;
@@ -128,12 +128,9 @@ inline void dust_related_props(
             grain_species_info->species_info()[grsp_i];
         const gr_float* grsp_density =
             sp_densities.contig1d_ptr(cur_grsp_info.species_idx);
-        FortranView<const gr_float***> grsp_d(
-            grsp_density, my_fields->grid_dimension[0],
-            my_fields->grid_dimension[1], my_fields->grid_dimension[2]);
 
         for (int i = idx_range.i_start; i <= idx_range.i_end; i++) {
-          dust2gas[i] += grsp_d(i, idx_range.j, idx_range.k);
+          dust2gas[i] += grsp_density[i];
         }
       }
 

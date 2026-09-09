@@ -78,13 +78,9 @@ def _setup_dust_densities(fc, state_vals, dust_to_gas_ratio):
     if fc.chemistry_data.dust_chemistry == 2:
         metal_field = fc.inject_pathway_density_yield_fields[0]
         metal_density = state_vals[metal_field]
-        dust_density = 0
         for gr, fmass in fc.chemistry_data._experimental_grain_inj_path_yields().items():
             fname = f"{gr}_density"
             state_vals[fname] = fmass[0] * metal_density
-            dust_density += state_vals[fname]
-
-        state_vals["dust_density"] = dust_density
 
     elif fc.chemistry_data.use_dust_density_field == 1:
         state_vals["dust_density"] = dust_to_gas_ratio * state_vals["density"]
