@@ -78,12 +78,9 @@ def _setup_dust_densities(fc, state_vals, dust_to_gas_ratio):
     if fc.chemistry_data.dust_chemistry == 2:
         metal_field = fc.inject_pathway_density_yield_fields[0]
         metal_density = state_vals[metal_field]
-        dust_density = 0
         for gr, fmass in fc.chemistry_data._experimental_grain_inj_path_yields().items():
-            state_vals[gr] = fmass[0] * metal_density
-            dust_density += state_vals[gr]
-
-        state_vals["dust_density"] = dust_density
+            fname = f"{gr}_density"
+            state_vals[fname] = fmass[0] * metal_density
 
     elif fc.chemistry_data.use_dust_density_field == 1:
         state_vals["dust_density"] = dust_to_gas_ratio * state_vals["density"]
@@ -204,7 +201,6 @@ def _setup_inj_pathway_fields(state_vals: dict[str, float],
                 f"pathways but not the '{primary_pathway_yield_field}' field"
             )
     state_vals[primary_pathway_yield_field] = state_vals["metal_density"]
-
 
 def setup_fluid_container(my_chemistry,
                           density=mass_hydrogen_cgs,

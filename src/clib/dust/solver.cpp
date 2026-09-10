@@ -202,8 +202,8 @@ void lookup_dust_rates1d(IndexRange idx_range, const double* tdust,
     double* const* grain_growth_rates =
         FullRxnRateBuf_grain_growth_bufs(&rxn_rate_buf);
 
-    long long nratec_single_elem_arr[1] = {
-        (long long)(my_chemistry->NumberOfTemperatureBins)};
+    int64_t nratec_single_elem_arr[1] = {
+        static_cast<int64_t>(my_chemistry->NumberOfTemperatureBins)};
 
     if (my_chemistry->grain_growth == 1) {
       // NOTE: an earlier version of this logic included a large block of
