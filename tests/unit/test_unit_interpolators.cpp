@@ -15,7 +15,7 @@ TEST(InterpolationTest, Interpolate1D) {
     long long dataSize = 10;
     double input1 = 5.0;
     double dgridPar1 = 1.3;
-    std::vector<long long> gridDim(1,dataSize);
+    std::vector<int64_t> gridDim(1,dataSize);
     std::vector<double> gridPar1(dataSize);
     std::vector<double> dataField(dataSize);
 
@@ -44,7 +44,7 @@ TEST(InterpolationTest, Interpolate2D) {
     double dgridPar2 = 1.5;
     double input1 = 2.3;
     double input2 = 1.7;
-    std::vector<long long> gridDim = {dataSize1, dataSize2};
+    std::vector<int64_t> gridDim = {dataSize1, dataSize2};
     std::vector<double> gridPar1(dataSize1);
     std::vector<double> gridPar2(dataSize2);
     std::vector<double> dataField(dataSize);
@@ -85,7 +85,7 @@ TEST(InterpolationTest, Interpolate3D) {
     double input1 = 2.4;
     double input2 = 5.3;
     double input3 = 1.5;
-    std::vector<long long> gridDim = {dataSize1, dataSize2, dataSize3};
+    std::vector<int64_t> gridDim = {dataSize1, dataSize2, dataSize3};
     std::vector<double> gridPar1(dataSize1);
     std::vector<double> gridPar2(dataSize2);
     std::vector<double> gridPar3(dataSize3);
@@ -134,7 +134,7 @@ TEST(InterpolationTest, Interpolate3Dz) {
     double input1 = 2.4;
     double input2 = 5.3;
     double input3 = 1.5;
-    std::vector<long long> gridDim = {dataSize1, dataSize2, dataSize3};
+    std::vector<int64_t> gridDim = {dataSize1, dataSize2, dataSize3};
     std::vector<double> gridPar1(dataSize1);
     std::vector<double> gridPar2(dataSize2);
     std::vector<double> gridPar3(dataSize3);
@@ -195,7 +195,7 @@ TEST(InterpolationTest, Interpolate2Df3D) {
     double dgridPar3 = 2.5;
     double input1 = 2.4;
     double input3 = 1.5;
-    std::vector<long long> gridDim = {dataSize1, dataSize2, dataSize3};
+    std::vector<int64_t> gridDim = {dataSize1, dataSize2, dataSize3};
     std::vector<double> gridPar1(dataSize1);
     std::vector<double> gridPar2(dataSize2);
     std::vector<double> gridPar3(dataSize3);
@@ -244,7 +244,7 @@ TEST(InterpolationTest, Interpolate4D) {
     double input2 = 5.3;
     double input3 = 1.5;
     double input4 = 5.7;
-    std::vector<long long> gridDim = {dataSize1, dataSize2, dataSize3, dataSize4};
+    std::vector<int64_t> gridDim = {dataSize1, dataSize2, dataSize3, dataSize4};
     std::vector<double> gridPar1(dataSize1);
     std::vector<double> gridPar2(dataSize2);
     std::vector<double> gridPar3(dataSize3);
@@ -305,7 +305,7 @@ TEST(InterpolationTest, Interpolate5D) {
     double input3 = 1.5;
     double input4 = 5.7;
     double input5 = 2.7;
-    std::vector<long long> gridDim = {dataSize1, dataSize2, dataSize3, dataSize4, dataSize5};
+    std::vector<int64_t> gridDim = {dataSize1, dataSize2, dataSize3, dataSize4, dataSize5};
     std::vector<double> gridPar1(dataSize1);
     std::vector<double> gridPar2(dataSize2);
     std::vector<double> gridPar3(dataSize3);
