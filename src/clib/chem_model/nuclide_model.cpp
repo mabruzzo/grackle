@@ -17,6 +17,7 @@
 #include "../support/FrozenKeyIdxBiMap.hpp"
 #include "../support/status_reporting.hpp"
 #include "grackle.h"
+#include "support/expected.hpp"
 
 namespace GRIMPL_NAMESPACE_DECL {
 
@@ -71,10 +72,15 @@ NuclideModel::NuclideModel() {
   for (int i = 0; i < nuclide_detail::N_ENTRIES; i++) {
     symbols[i] = nuclide_detail::pairs[i].first;
   }
-  symbol_map_ = FrozenKeyIdxBiMap::create(symbols, nuclide_detail::N_ENTRIES,
-                                          BiMapMode::REFS_KEYDATA);
-  if (!symbol_map_.is_ok()) {  // this is an internal programming error!
-    GR_INTERNAL_ERROR("issue initializing symbol_map_");
+  Expected<FrozenKeyIdxBiMap, Error> map_rslt = FrozenKeyIdxBiMap::create(
+      symbols, nuclide_detail::N_ENTRIES, BiMapMode::REFS_KEYDATA);
+  if (map_rslt.has_value()) {
+    symbol_map_ = map_rslt.value();
+  } else {  // this is an internal programming error
+    Error err = map_rslt.error().context(
+        "programming error prevents initialization of symbol_map_");
+    std::string err_msg = std::format("{}", err);
+    GR_INTERNAL_ERROR("%s", err_msg.c_str());
   }
 
   // initialize props_
