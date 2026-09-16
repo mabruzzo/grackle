@@ -83,7 +83,7 @@ GrainSpeciesInfoEntry mk_gsp_info_entry_helper_(
 
 }  // anonymous namespace
 
-Expected<GrainSpeciesInfo*, Error> GrainSpeciesInfo::create_ptr(
+Expected<GrainSpeciesInfo, Error> GrainSpeciesInfo::create(
     int dust_species_parameter) {
   int n_species = get_n_grain_species(dust_species_parameter);
   if (n_species <= 0) {
@@ -300,10 +300,10 @@ Expected<GrainSpeciesInfo*, Error> GrainSpeciesInfo::create_ptr(
     GrainSpeciesInfo::cleanup_array_(n_species, species_info);
     return Unexpected(name_map_rslt.error().context("issue building name_map"));
   } else {
-    GrainSpeciesInfo* out = new GrainSpeciesInfo;
-    out->n_species_ = n_species;
-    out->species_info_ = species_info;
-    out->name_map_.swap(name_map_rslt.value());
+    GrainSpeciesInfo out;
+    out.n_species_ = n_species;
+    out.species_info_ = species_info;
+    out.name_map_.swap(name_map_rslt.value());
     return out;
   }
 }
